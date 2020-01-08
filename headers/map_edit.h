@@ -49,9 +49,12 @@ typedef struct {
 } mapEditorState;
 
 void popRectNode(rectList list, int index);
+void freeAllRectNodes(rectList list);
 void printRectList(rectList list);
 
 rectNode* addRectNode(rectList list);
+
+int rectListLength(rectList list);
 
 
 editorRect* getListRect(rectList list, int index);

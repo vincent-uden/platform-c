@@ -13,6 +13,20 @@ void popRectNode(rectList list, int index) {
     POP_LT_PTR(lt, toBeRemoved);
 }
 
+void freeAllRectNodes(rectList list) {
+    int length = rectListLength(list);
+    rectNode** ptrs = malloc(length * sizeof(rectNode*));
+    PUSH_LT(lt, ptrs, free);
+    rectNode* curr = list;
+    rectNode* next;
+    while ( curr != NULL ) {
+        next = curr->next;
+        POP_LT_PTR(lt, curr);
+        curr = next;
+    }
+    POP_LT_PTR(lt, ptrs);
+}
+
 void printRectList(rectList list) {
     rectNode* curr = list;
     int i = 0;
@@ -41,6 +55,16 @@ rectNode* addRectNode(rectList list) {
 
     curr->next = newNode;
     return newNode;
+}
+
+int rectListLength(rectList list) {
+    rectNode* curr = list;
+    int i = 0;
+    while ( curr != NULL ) {
+        curr = curr->next;
+        i++;
+    }
+    return i;
 }
 
 editorRect* getListRect(rectList list, int index) {
@@ -73,10 +97,23 @@ mapFile loadMapFile(char* fp) {
     Vector size;
     f = fopen(fp, "r");
     PUSH_LT(lt, f, fclose);
+    if ( !f ) {
+        POP_LT_PTR(lt, buf);
+        POP_LT_PTR(lt, f);
+        output.path = NULL;
+        return output;
+    }
     char* start;
     char* end;
 
     while ( fgets(buf, 1024, f) ) {
+        if ( ferror(f) ) {
+            // Remove all already allocated nodes
+            POP_LT_PTR(lt, buf);
+            POP_LT_PTR(lt, f);
+            output.path = NULL;
+            return output;
+        }
         start = buf;
         pos.x = strtod(start, &end);
         start = end;
@@ -168,6 +205,11 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
                     puts("Done");
                 }
             }
+        }
+        /* Z - delete all rects */
+        if ( KEYS[SDLK_z] ) {
+            freeAllRectNodes(es->rl);
+            es->rl = NULL;
         }
     case RECT:
         break;
