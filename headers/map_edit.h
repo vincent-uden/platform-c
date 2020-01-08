@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <string.h>
 
 #include "./physics.h"
 #include "./rendering.h"
@@ -30,6 +31,13 @@ struct rectNode {
 typedef rectNode* rectList;
 
 typedef struct {
+    char* path;
+    rectList rl;
+
+    Vector playerStartPos;
+} mapFile;
+
+typedef struct {
     Vector prevMousePos;
     Vector mousePos;
     rectList rl;
@@ -45,9 +53,14 @@ void printRectList(rectList list);
 
 rectNode* addRectNode(rectList list);
 
+
 editorRect* getListRect(rectList list, int index);
 
 int isMouseInRect(editorRect r);
+
+mapFile loadMapFile(char* fp);
+
+void freeMapFile(mapFile* mf);
 
 void mapHandleInput(int* KEYS, mapEditorState* es);
 void mapHandleMouseClick(int button, mapEditorState* es);

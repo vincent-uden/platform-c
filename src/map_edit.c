@@ -58,6 +58,20 @@ int isMouseInRect(editorRect r) {
         (mouseY >= r.position.y && mouseY <= r.position.y + r.size.y);
 }
 
+/* Will make it's own copy of fp. The copy is freed with freeMapFile but not the original fp */
+mapFile loadMapFile(char* fp) {
+    mapFile output;
+    int fpLen = strlen(fp);
+    output.path = malloc(fpLen * sizeof(char));
+    strcpy(output.path, fp); // TODO: Continue here, read file etc.
+
+    return output;
+}
+
+void freeMapFile(mapFile* mf) {
+
+}
+
 void mapHandleInput(int* KEYS, mapEditorState* es) {
     // TODO: Something happens when deleting after exiting and reentering the editor
     if ( KEYS[115] ) {
