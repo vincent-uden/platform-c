@@ -98,6 +98,7 @@ mapFile loadMapFile(char* fp) {
     f = fopen(fp, "r");
     PUSH_LT(lt, f, fclose);
     if ( !f ) {
+        freeAllRectNodes(output.rl);
         POP_LT_PTR(lt, buf);
         POP_LT_PTR(lt, f);
         output.path = NULL;
