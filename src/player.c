@@ -76,6 +76,9 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
                 if ( player->speed.y > 0 ) {
                     player->speed.y = 0;
                     player->jumpsLeft = 1;
+                } else {
+                    player->speed.y = 0;
+                    player->acc.y = 0;
                 }
             }
         }
@@ -96,6 +99,9 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
                 if ( player->speed.y > 0 ) {
                     player->speed.y = 0;
                     player->jumpsLeft = 1;
+                }else {
+                    player->speed.y = 0;
+                    player->acc.y = 0;
                 }
             }
         }
@@ -116,6 +122,9 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
                 if ( player->speed.y > 0 ) {
                     player->speed.y = 0;
                     player->jumpsLeft = 1;
+                }else {
+                    player->speed.y = 0;
+                    player->acc.y = 0;
                 }
             }
         }
@@ -136,6 +145,9 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
                 if ( player->speed.y > 0 ) {
                     player->speed.y = 0;
                     player->jumpsLeft = 1;
+                }else {
+                    player->speed.y = 0;
+                    player->acc.y = 0;
                 }
             }
         }
