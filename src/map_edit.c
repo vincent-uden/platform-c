@@ -37,7 +37,7 @@ rectNode* addRectNode(rectList list) {
     rectNode* newNode = malloc(sizeof(rectNode));
     PUSH_LT(lt, newNode, free);
     newNode->next = NULL;
-    newNode->value = (editorRect) { (Vector) { 0, 0 }, (Vector) { 0, 0 }};
+    newNode->value = (editorRect) { (Vector) { 0, 0 }, (Vector) { 0, 0 }, 0};
 
     curr->next = newNode;
     return newNode;
@@ -63,7 +63,57 @@ mapFile loadMapFile(char* fp) {
     mapFile output;
     int fpLen = strlen(fp);
     output.path = malloc(fpLen * sizeof(char));
+    output.rl = NULL;
     strcpy(output.path, fp); // TODO: Continue here, read file etc.
+
+    char* buf = malloc(sizeof(char) * 1024);
+    PUSH_LT(lt, buf, free);
+    FILE* f;
+    Vector pos;
+    Vector size;
+    f = fopen(fp, "r");
+    PUSH_LT(lt, f, fclose);
+    char* start;
+    char* end;
+
+    while ( fgets(buf, 1024, f) ) {
+        start = buf;
+        pos.x = strtod(start, &end);
+        start = end;
+        pos.y = strtod(start, &end);
+        start = end;
+        size.x = strtod(start, &end);
+        start = end;
+        size.y = strtod(start, &end);
+        start = end;
+
+        rectNode* newNode;
+        /* Adding new rect to list */
+        if ( output.rl == NULL ) {
+            /* First rect */
+            newNode = malloc(sizeof(rectNode));
+            PUSH_LT(lt, newNode, free);
+            newNode->next = NULL;
+            output.rl = newNode;
+
+        } else {
+            newNode = addRectNode(output.rl);
+        }
+        if ( size.x < 0 ) {
+            size.x *= -1;
+            pos.x -= size.x;
+        }
+        if ( size.y < 0 ) {
+            size.y *= -1;
+            pos.y -= size.y;
+        }
+        newNode->value.position = pos;
+        newNode->value.size = size;
+        newNode->value.selected = 0;
+    }
+
+    POP_LT_PTR(lt, buf);
+    POP_LT_PTR(lt, f);
 
     return output;
 }
@@ -173,6 +223,7 @@ void mapHandleMouseClick(int button, mapEditorState* es) {
                 }
                 newNode->value.position = newPos;
                 newNode->value.size = newSize;
+                newNode->value.selected = 0;
             }
         }
         if ( button == 3 ) {

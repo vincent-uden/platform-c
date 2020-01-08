@@ -104,13 +104,8 @@ int main() {
     gameState.rects = NULL;
     gameState.rectAmount = 0;
 
-    rectNode* ground = malloc(sizeof(rectNode));
-    PUSH_LT(lt, ground, free);
-    ground->next = NULL;
-    editorState.rl = ground;
-    ground->value.position = (Vector) { -100, 700 };
-    ground->value.size = (Vector) { 10000, 60 };
-    ground->value.selected = 0;
+    mapFile testMap = loadMapFile("./test-map.txt");
+    editorState.rl = testMap.rl;
     worldSetRects(&gameState, &editorState);
 
     while ( running ) {
