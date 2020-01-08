@@ -88,7 +88,7 @@ mapFile loadMapFile(char* fp) {
     int fpLen = strlen(fp);
     output.path = malloc(fpLen * sizeof(char));
     output.rl = NULL;
-    strcpy(output.path, fp); // TODO: Continue here, read file etc.
+    strcpy(output.path, fp);
 
     char* buf = malloc(sizeof(char) * 1024);
     PUSH_LT(lt, buf, free);
@@ -98,7 +98,6 @@ mapFile loadMapFile(char* fp) {
     f = fopen(fp, "r");
     PUSH_LT(lt, f, fclose);
     if ( !f ) {
-        freeAllRectNodes(output.rl);
         POP_LT_PTR(lt, buf);
         POP_LT_PTR(lt, f);
         output.path = NULL;
@@ -109,9 +108,10 @@ mapFile loadMapFile(char* fp) {
 
     while ( fgets(buf, 1024, f) ) {
         if ( ferror(f) ) {
-            // Remove all already allocated nodes
+            freeAllRectNodes(output.rl);
             POP_LT_PTR(lt, buf);
             POP_LT_PTR(lt, f);
+            POP_LT_PTR(lt, output.path);
             output.path = NULL;
             return output;
         }
@@ -157,7 +157,8 @@ mapFile loadMapFile(char* fp) {
 }
 
 void freeMapFile(mapFile* mf) {
-
+    POP_LT_PTR(lt, mf->path);
+    freeAllRectNodes(mf->rl);
 }
 
 void mapHandleInput(int* KEYS, mapEditorState* es) {
