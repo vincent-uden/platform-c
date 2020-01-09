@@ -82,11 +82,19 @@ int isMouseInRect(editorRect r) {
         (mouseY >= r.position.y && mouseY <= r.position.y + r.size.y);
 }
 
+int isMouseInSDL_Rect(SDL_Rect r) {
+    int mouseX, mouseY;
+    SDL_GetMouseState(&mouseX, &mouseY);
+    return (mouseX >= r.x && mouseX <= r.x + r.w) &&
+        (mouseY >= r.y && mouseY <= r.y + r.h);
+}
+
 /* Will make it's own copy of fp. The copy is freed with freeMapFile but not the original fp */
 mapFile loadMapFile(char* fp) {
     mapFile output;
-    int fpLen = strlen(fp);
+    int fpLen = strlen(fp) + 1;
     output.path = malloc(fpLen * sizeof(char));
+    PUSH_LT(lt, output.path, free);
     output.rl = NULL;
     strcpy(output.path, fp);
 
@@ -161,8 +169,60 @@ void freeMapFile(mapFile* mf) {
     freeAllRectNodes(mf->rl);
 }
 
+void mapAddPathChar(int i, mapEditorState* es) {
+    int len = strlen(es->mf->path) + 2;
+    char* new = malloc(len * sizeof(char));
+    PUSH_LT(lt, new, free);
+    strcpy(new, es->mf->path);
+    new[len-1] = '\0';
+    new[len-2] = i;
+    POP_LT_PTR(lt, es->mf->path);
+    es->mf->path = new;
+}
+
 void mapHandleInput(int* KEYS, mapEditorState* es) {
     // TODO: Something happens when deleting after exiting and reentering the editor
+    if ( es->currTool == TYPING_PATH ) {
+        for ( int i = 97; i < 123; i++ ) {
+            if ( KEYS[i] ) {
+                mapAddPathChar(i, es);
+                KEYS[i] = 0;
+            }
+        }
+        if ( KEYS[8] ) {
+            int len = strlen(es->mf->path);
+            if ( len != 0 ) {
+                char* new = malloc(len * sizeof(char));
+                PUSH_LT(lt, new, free);
+                strncpy(new, es->mf->path, len - 1);
+                new[len-1] = '\0';
+                POP_LT_PTR(lt, es->mf->path);
+                es->mf->path = new;
+                KEYS[8] = 0;
+            }
+        }
+        if ( KEYS[46] ) {
+            /* . */
+            mapAddPathChar(46, es);
+            KEYS[46] = 0;
+        }
+        if ( KEYS[32] ) {
+            /* Space */
+            mapAddPathChar(32, es);
+            KEYS[32] = 0;
+        }
+        if ( KEYS[13] ) {
+            /* Return */
+            KEYS[13] = 0;
+            es->currTool = SELECT;
+        }
+        if ( KEYS[45] ) {
+            /* - */
+            mapAddPathChar(45, es);
+            KEYS[45] = 0;
+        }
+        return;
+    }
     if ( KEYS[115] ) {
         /* S - select */
         es->currTool = SELECT;
@@ -213,6 +273,14 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
             freeAllRectNodes(es->rl);
             es->rl = NULL;
         }
+        /* M - load new map */
+        if ( KEYS[SDLK_m] ) {
+            // TODO: Implement
+        }
+        /* N - save map */
+        if ( KEYS[SDLK_n] ) {
+            // TODO: Implement
+        }
     case RECT:
         break;
     }
@@ -222,6 +290,10 @@ void mapHandleMouseClick(int button, mapEditorState* es) {
     switch ( es->currTool ) {
     case SELECT:
         if ( button == 1 ) {
+            if ( isMouseInSDL_Rect(es->pathRect) ) {
+                /* Clicking in the path window to type a new path */
+                es->currTool = TYPING_PATH;
+            }
             rectNode* currNode = es->rl;
             while ( currNode != NULL ) {
                 if ( isMouseInRect(currNode->value) ) {
@@ -277,6 +349,11 @@ void mapHandleMouseClick(int button, mapEditorState* es) {
             }
         }
         break;
+    case TYPING_PATH:
+        if ( button == 1 ) {
+            es->currTool = SELECT;
+        }
+        break;
     }
 }
 
@@ -319,7 +396,12 @@ void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
 
     lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     lastRect.x -= 5; lastRect.y -= 2; lastRect.w += 20; lastRect.h += 6;
-    renderRect(renderer, 0x33000000, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
+    if ( es->currTool == TYPING_PATH ) {
+        renderRect(renderer, 0x55000000, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
+    } else {
+        renderRect(renderer, 0x33000000, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
+    }
+    es->pathRect = lastRect;
     lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     //lastRect.x -= 5; lastRect.y -= 2; lastRect.w += 20;
     lastRect.y -= 2;

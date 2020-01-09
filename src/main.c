@@ -120,10 +120,11 @@ int main() {
                 break;
             case SDL_KEYDOWN:
                 // Paragraph to switch to map editor
+                printf("Key: %d\n", e.key.keysym.sym);
                 if ( e.key.keysym.sym ==  SDLK_f ) {
                     if ( gm == PLAYING ) {
                         gm = MAPEDIT;
-                    } else if ( gm == MAPEDIT ) {
+                    } else if ( gm == MAPEDIT && editorState.currTool != TYPING_PATH ) {
                         gm = PLAYING;
                         worldSetRects(&gameState, &editorState);
                     }
