@@ -99,6 +99,7 @@ int main() {
     editorState.cursorTexture = cursorTexture; editorState.cursorRect = &cursorRect;
     editorState.cursorState = 0;
     editorState.currTool = SELECT;
+    editorState.mf = NULL;
 
     worldState gameState;
     gameState.rects = NULL;
@@ -106,7 +107,10 @@ int main() {
 
     mapFile testMap = loadMapFile("./test-map.txt");
     editorState.rl = testMap.rl;
+    editorState.mf = &testMap;
     worldSetRects(&gameState, &editorState);
+
+    running = 1;
 
     while ( running ) {
         while ( SDL_PollEvent(&e) != 0 ) {

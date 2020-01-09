@@ -44,6 +44,8 @@ typedef struct {
     int cursorState;
     enum tool currTool;
 
+    mapFile* mf;
+
     SDL_Texture* cursorTexture;
     SDL_Rect* cursorRect;
 } mapEditorState;

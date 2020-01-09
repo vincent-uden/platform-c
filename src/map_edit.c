@@ -316,4 +316,14 @@ void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
     } else {
         lastRect = renderText(renderer, "Rect (R)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     }
+
+    lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    lastRect.x -= 5; lastRect.y -= 2; lastRect.w += 20; lastRect.h += 6;
+    renderRect(renderer, 0x33000000, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
+    lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    //lastRect.x -= 5; lastRect.y -= 2; lastRect.w += 20;
+    lastRect.y -= 2;
+    lastRect.h += 6;
+    lastRect = renderTextSmall(renderer, "Save map (N)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 5 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    lastRect = renderTextSmall(renderer, "Load map (M)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
 }
