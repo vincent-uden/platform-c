@@ -58,6 +58,7 @@ rectNode* addRectNode(rectList list) {
 }
 
 int rectListLength(rectList list) {
+    printf("%p\n", list);
     rectNode* curr = list;
     int i = 0;
     while ( curr != NULL ) {
@@ -266,6 +267,7 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
                     }
                     puts("Done");
                 }
+                es->mf->rl = es->rl;
             }
         }
         /* Z - delete all rects */
@@ -275,7 +277,11 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
         }
         /* M - load new map */
         if ( KEYS[SDLK_m] ) {
-            // TODO: Implement
+            mapFile newMap = loadMapFile(es->mf->path);
+            freeMapFile(es->mf);
+            es->mf->path = newMap.path;
+            es->mf->rl = newMap.rl;
+            es->rl = newMap.rl;
         }
         /* N - save map */
         if ( KEYS[SDLK_n] ) {
