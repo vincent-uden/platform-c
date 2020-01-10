@@ -99,19 +99,18 @@ int main() {
     editorState.cursorTexture = cursorTexture; editorState.cursorRect = &cursorRect;
     editorState.cursorState = 0;
     editorState.currTool = SELECT;
+    editorState.mf = NULL;
 
     worldState gameState;
     gameState.rects = NULL;
     gameState.rectAmount = 0;
 
-    rectNode* ground = malloc(sizeof(rectNode));
-    PUSH_LT(lt, ground, free);
-    ground->next = NULL;
-    editorState.rl = ground;
-    ground->value.position = (Vector) { -100, 700 };
-    ground->value.size = (Vector) { 10000, 60 };
-    ground->value.selected = 0;
+    mapFile testMap = loadMapFile("./test-map.txt");
+    editorState.rl = testMap.rl;
+    editorState.mf = &testMap;
     worldSetRects(&gameState, &editorState);
+
+    running = 1;
 
     while ( running ) {
         while ( SDL_PollEvent(&e) != 0 ) {
@@ -121,10 +120,11 @@ int main() {
                 break;
             case SDL_KEYDOWN:
                 // Paragraph to switch to map editor
+                printf("Key: %d\n", e.key.keysym.sym);
                 if ( e.key.keysym.sym ==  SDLK_f ) {
                     if ( gm == PLAYING ) {
                         gm = MAPEDIT;
-                    } else if ( gm == MAPEDIT ) {
+                    } else if ( gm == MAPEDIT && editorState.currTool != TYPING_PATH ) {
                         gm = PLAYING;
                         worldSetRects(&gameState, &editorState);
                     }

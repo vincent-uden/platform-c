@@ -43,15 +43,13 @@ void renderRect(SDL_Renderer* renderer, int color, Vector pos, Vector size) {
     SDL_DestroyTexture(texture);
 }
 
-/* pos refers to top left corner if left adjusted and top right corner if right adjusted
- * Also returns the render rect for further use */
-SDL_Rect renderText(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
-    SDL_Surface* msgSurf = TTF_RenderText_Blended(sansBold, text, color);
+SDL_Rect renderTextBackend(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font) {
+    SDL_Surface* msgSurf = TTF_RenderText_Blended(font, text, color);
     PUSH_LT(lt, msgSurf, SDL_FreeSurface);
     SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer, msgSurf);
     PUSH_LT(lt, msgText, SDL_DestroyTexture);
     SDL_Rect txtRect;
-    TTF_SizeText(sansBold, text, &txtRect.w, &txtRect.h);
+    TTF_SizeText(font, text, &txtRect.w, &txtRect.h);
     txtRect.x = pos.x; txtRect.y = pos.y;
     if ( adj == TRIGHT ) {
         txtRect.x -= txtRect.w;
@@ -60,4 +58,14 @@ SDL_Rect renderText(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vec
     POP_LT_PTR(lt, msgSurf);
     POP_LT_PTR(lt, msgText);
     return txtRect;
+}
+
+/* pos refers to top left corner if left adjusted and top right corner if right adjusted
+ * Also returns the render rect for further use */
+SDL_Rect renderText(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
+    return renderTextBackend(renderer, text, adj, pos, color, sansBold);
+}
+
+SDL_Rect renderTextSmall(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
+    return renderTextBackend(renderer, text, adj, pos, color, sansBoldSmall);
 }

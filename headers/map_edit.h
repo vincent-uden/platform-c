@@ -14,7 +14,7 @@
 extern Lifetime lt;
 extern const int SCREEN_WIDTH;
 
-enum tool {SELECT, RECT};
+enum tool {SELECT, RECT, TYPING_PATH};
 
 typedef struct {
     Vector position;
@@ -44,24 +44,33 @@ typedef struct {
     int cursorState;
     enum tool currTool;
 
+    mapFile* mf;
+
     SDL_Texture* cursorTexture;
     SDL_Rect* cursorRect;
+    SDL_Rect pathRect;
 } mapEditorState;
 
 void popRectNode(rectList list, int index);
+void freeAllRectNodes(rectList list);
 void printRectList(rectList list);
 
 rectNode* addRectNode(rectList list);
+
+int rectListLength(rectList list);
 
 
 editorRect* getListRect(rectList list, int index);
 
 int isMouseInRect(editorRect r);
+int isMouseInSDL_Rect(SDL_Rect r);
 
 mapFile loadMapFile(char* fp);
 
 void freeMapFile(mapFile* mf);
+void saveMapFile(mapFile* mf);
 
+void mapAddPathChar(int i, mapEditorState* es);
 void mapHandleInput(int* KEYS, mapEditorState* es);
 void mapHandleMouseClick(int button, mapEditorState* es);
 void mapEditUpdate(mapEditorState* es);
