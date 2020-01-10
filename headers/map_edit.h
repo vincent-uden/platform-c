@@ -68,6 +68,7 @@ int isMouseInSDL_Rect(SDL_Rect r);
 mapFile loadMapFile(char* fp);
 
 void freeMapFile(mapFile* mf);
+void saveMapFile(mapFile* mf);
 
 void mapAddPathChar(int i, mapEditorState* es);
 void mapHandleInput(int* KEYS, mapEditorState* es);

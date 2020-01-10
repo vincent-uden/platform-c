@@ -170,6 +170,22 @@ void freeMapFile(mapFile* mf) {
     freeAllRectNodes(mf->rl);
 }
 
+void saveMapFile(mapFile* mf) {
+    FILE* f = fopen(mf->path, "w");
+    PUSH_LT(lt, f, fclose);
+    if ( !f ) {
+        POP_LT_PTR(lt, f);
+        return;
+    }
+    rectNode* curr = mf->rl;
+    while ( curr != NULL ) {
+        fprintf(f, "%f %f %f %f\n", curr->value.position.x, curr->value.position.y, curr->value.size.x, curr->value.size.y);
+        curr = curr->next;
+    }
+
+    POP_LT_PTR(lt, f);
+}
+
 void mapAddPathChar(int i, mapEditorState* es) {
     int len = strlen(es->mf->path) + 2;
     char* new = malloc(len * sizeof(char));
@@ -275,20 +291,21 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
             freeAllRectNodes(es->rl);
             es->rl = NULL;
         }
-        /* M - load new map */
-        if ( KEYS[SDLK_m] ) {
-            mapFile newMap = loadMapFile(es->mf->path);
-            freeMapFile(es->mf);
-            es->mf->path = newMap.path;
-            es->mf->rl = newMap.rl;
-            es->rl = newMap.rl;
-        }
-        /* N - save map */
-        if ( KEYS[SDLK_n] ) {
-            // TODO: Implement
-        }
+
     case RECT:
         break;
+    }
+    /* M - load new map */
+    if ( KEYS[SDLK_m] ) {
+        mapFile newMap = loadMapFile(es->mf->path);
+        freeMapFile(es->mf);
+        es->mf->path = newMap.path;
+        es->mf->rl = newMap.rl;
+        es->rl = newMap.rl;
+    }
+    /* N - save map */
+    if ( KEYS[SDLK_n] ) {
+        saveMapFile(es->mf);
     }
 }
 
