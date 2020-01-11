@@ -252,11 +252,7 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
     }
     if ( KEYS[SDLK_m] ) {
         /* M - load new map */
-        mapFile newMap = loadMapFile(es->mf->path);
-        freeMapFile(es->mf);
-        es->mf->path = newMap.path;
-        es->mf->rl = newMap.rl;
-        es->rl = newMap.rl;
+        es->currTool = LOAD_CONFIRM;
     }
     if ( KEYS[SDLK_n] ) {
         /* N - save map */
@@ -317,6 +313,25 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
         }
         break;
     case SAVE_DONE:
+        if ( KEYS[13] || KEYS[27] ) {
+            es->currTool = SELECT;
+        }
+        break;
+    case LOAD_CONFIRM:
+        if ( KEYS[13] ) {
+            mapFile newMap = loadMapFile(es->mf->path);
+            freeMapFile(es->mf);
+            es->mf->path = newMap.path;
+            es->mf->rl = newMap.rl;
+            es->rl = newMap.rl;
+            es->currTool = LOAD_DONE;
+            KEYS[13] = 0;
+        }
+        if ( KEYS[27] ) {
+            es->currTool = SELECT;
+        }
+        break;
+    case LOAD_DONE:
         if ( KEYS[13] || KEYS[27] ) {
             es->currTool = SELECT;
         }
@@ -452,5 +467,11 @@ void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
     }
     if ( es->currTool == SAVE_DONE ) {
         renderPopup(renderer, "File saved!");
+    }
+    if ( es->currTool == LOAD_CONFIRM ) {
+        renderConfirmPopup(renderer, "Load file?");
+    }
+    if ( es->currTool == LOAD_DONE ) {
+        renderPopup(renderer, "File loaded!");
     }
 }
