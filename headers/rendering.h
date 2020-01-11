@@ -14,6 +14,9 @@
 extern TTF_Font* sansBold;
 extern TTF_Font* sansBoldSmall;
 extern Lifetime lt;
+extern const int SCREEN_WIDTH;
+extern const int SCREEN_HEIGHT;
+
 
 enum textAdjust {TLEFT, TRIGHT};
 

@@ -250,6 +250,18 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
         es->currTool = RECT;
         puts("Rect");
     }
+    if ( KEYS[SDLK_m] ) {
+        /* M - load new map */
+        mapFile newMap = loadMapFile(es->mf->path);
+        freeMapFile(es->mf);
+        es->mf->path = newMap.path;
+        es->mf->rl = newMap.rl;
+        es->rl = newMap.rl;
+    }
+    if ( KEYS[SDLK_n] ) {
+        /* N - save map */
+        es->currTool = SAVE_CONFIRM;
+    }
     switch ( es->currTool ) {
     case SELECT:
         /* X - delete */
@@ -294,18 +306,21 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
 
     case RECT:
         break;
-    }
-    /* M - load new map */
-    if ( KEYS[SDLK_m] ) {
-        mapFile newMap = loadMapFile(es->mf->path);
-        freeMapFile(es->mf);
-        es->mf->path = newMap.path;
-        es->mf->rl = newMap.rl;
-        es->rl = newMap.rl;
-    }
-    /* N - save map */
-    if ( KEYS[SDLK_n] ) {
-        saveMapFile(es->mf);
+    case SAVE_CONFIRM:
+        if ( KEYS[13] ) {
+            saveMapFile(es->mf);
+            es->currTool = SAVE_DONE;
+            KEYS[13] = 0;
+        }
+        if ( KEYS[27] ) {
+            es->currTool = SELECT;
+        }
+        break;
+    case SAVE_DONE:
+        if ( KEYS[13] || KEYS[27] ) {
+            es->currTool = SELECT;
+        }
+        break;
     }
 }
 
@@ -431,4 +446,11 @@ void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
     lastRect.h += 6;
     lastRect = renderTextSmall(renderer, "Save map (N)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 5 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     lastRect = renderTextSmall(renderer, "Load map (M)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+
+    if ( es->currTool == SAVE_CONFIRM ) {
+        renderConfirmPopup(renderer, "Save file?");
+    }
+    if ( es->currTool == SAVE_DONE ) {
+        renderPopup(renderer, "File saved!");
+    }
 }

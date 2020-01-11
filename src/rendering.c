@@ -79,13 +79,22 @@ SDL_Rect renderPopup(SDL_Renderer* renderer, char* text) {
     SDL_Rect txtRect;
     TTF_SizeText(sansBold, text, &txtRect.w, &txtRect.h);
 
-    Vector innerRectPos  = { txtRect.x - 5, txtRect.y - 5 };
-    Vector innerRectSize = { txtRect.w + 5, txtRect.h + 5 };
-    Vector outerRectPos  = { innerRectPos.x - 5, innerRectPos.y - 5 };
-    Vector outerRectSize = { innerRectSize.x + 5, innerRectSize.y + 5 };
+    Vector txtPos = { (SCREEN_WIDTH - txtRect.w) / 2.0, (SCREEN_HEIGHT - txtRect.h) / 2.0 };
+    txtRect.x = txtPos.x;
+    txtRect.y = txtPos.y;
 
+    int marginX = 40; int marginY = 15;
+    int border = 5;
+
+    Vector innerRectPos  = { txtRect.x - marginX, txtRect.y - marginY };
+    Vector innerRectSize = { txtRect.w + marginX * 2, txtRect.h + marginY * 2 };
+    Vector outerRectPos  = { innerRectPos.x - border, innerRectPos.y - border };
+    Vector outerRectSize = { innerRectSize.x + border * 2, innerRectSize.y + border * 2 };
+
+    renderRect(renderer, 0x88000000, VectorAdd(outerRectPos, (Vector) {9, 9}), outerRectSize);
     renderRect(renderer, 0xFFFFFFFF, outerRectPos, outerRectSize);
-    renderRect(renderer, 0xFF313131, outerRectPos, outerRectSize);
+    renderRect(renderer, 0xFF222222, innerRectPos, innerRectSize);
+    renderText(renderer, text, TLEFT, txtPos, (SDL_Color) { 0xFF, 0xFF, 0xFF });
 
     POP_LT_PTR(lt, msgSurf);
     POP_LT_PTR(lt, msgText);
@@ -95,5 +104,39 @@ SDL_Rect renderPopup(SDL_Renderer* renderer, char* text) {
 
 /* Always render centered in screen */
 SDL_Rect renderConfirmPopup(SDL_Renderer* renderer, char* text) {
+    SDL_Surface* msgSurf = TTF_RenderText_Blended(sansBold, text, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    PUSH_LT(lt, msgSurf, SDL_FreeSurface);
+    SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer, msgSurf);
+    PUSH_LT(lt, msgText, SDL_DestroyTexture);
+    SDL_Rect txtRect;
+    TTF_SizeText(sansBold, text, &txtRect.w, &txtRect.h);
 
+    Vector txtPos = { (SCREEN_WIDTH - txtRect.w) / 2.0, (SCREEN_HEIGHT - txtRect.h) / 2.0 };
+    txtRect.x = txtPos.x;
+    txtRect.y = txtPos.y;
+
+    int marginX = 40; int marginY = 30;
+    int border = 5;
+
+    Vector innerRectPos  = { txtRect.x - marginX, txtRect.y - marginY };
+    Vector innerRectSize = { txtRect.w + marginX * 2, txtRect.h + marginY * 2 };
+    Vector outerRectPos  = { innerRectPos.x - border, innerRectPos.y - border };
+    Vector outerRectSize = { innerRectSize.x + border * 2, innerRectSize.y + border * 2 };
+
+    renderRect(renderer, 0x88000000, VectorAdd(outerRectPos, (Vector) {9, 9}), outerRectSize);
+    renderRect(renderer, 0xFFFFFFFF, outerRectPos, outerRectSize);
+    renderRect(renderer, 0xFF222222, innerRectPos, innerRectSize);
+    txtPos.y -= 15;
+    renderText(renderer, text, TLEFT, txtPos, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    TTF_SizeText(sansBoldSmall, "Yes (Enter)   No (Esc)", &txtRect.w, &txtRect.h);
+    txtPos = (Vector) { (SCREEN_WIDTH - txtRect.w) / 2.0, (SCREEN_HEIGHT - txtRect.h) / 2.0 + 30};
+    txtRect.x = txtPos.x;
+    txtRect.y = txtPos.y;
+    txtPos.y -= 15;
+    renderTextSmall(renderer, "Yes (Enter)   No (Esc)", TLEFT, txtPos, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+
+    POP_LT_PTR(lt, msgSurf);
+    POP_LT_PTR(lt, msgText);
+
+    return (SDL_Rect) { outerRectPos.x, outerRectPos.y, outerRectSize.x, outerRectSize.y };
 }

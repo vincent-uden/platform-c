@@ -14,7 +14,7 @@
 extern Lifetime lt;
 extern const int SCREEN_WIDTH;
 
-enum tool {SELECT, RECT, TYPING_PATH};
+enum tool {SELECT, RECT, TYPING_PATH, SAVE_CONFIRM, SAVE_DONE};
 
 typedef struct {
     Vector position;
