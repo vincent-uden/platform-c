@@ -69,3 +69,31 @@ SDL_Rect renderText(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vec
 SDL_Rect renderTextSmall(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
     return renderTextBackend(renderer, text, adj, pos, color, sansBoldSmall);
 }
+
+/* Always render centered in screen */
+SDL_Rect renderPopup(SDL_Renderer* renderer, char* text) {
+    SDL_Surface* msgSurf = TTF_RenderText_Blended(sansBold, text, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    PUSH_LT(lt, msgSurf, SDL_FreeSurface);
+    SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer, msgSurf);
+    PUSH_LT(lt, msgText, SDL_DestroyTexture);
+    SDL_Rect txtRect;
+    TTF_SizeText(sansBold, text, &txtRect.w, &txtRect.h);
+
+    Vector innerRectPos  = { txtRect.x - 5, txtRect.y - 5 };
+    Vector innerRectSize = { txtRect.w + 5, txtRect.h + 5 };
+    Vector outerRectPos  = { innerRectPos.x - 5, innerRectPos.y - 5 };
+    Vector outerRectSize = { innerRectSize.x + 5, innerRectSize.y + 5 };
+
+    renderRect(renderer, 0xFFFFFFFF, outerRectPos, outerRectSize);
+    renderRect(renderer, 0xFF313131, outerRectPos, outerRectSize);
+
+    POP_LT_PTR(lt, msgSurf);
+    POP_LT_PTR(lt, msgText);
+
+    return (SDL_Rect) { outerRectPos.x, outerRectPos.y, outerRectSize.x, outerRectSize.y };
+}
+
+/* Always render centered in screen */
+SDL_Rect renderConfirmPopup(SDL_Renderer* renderer, char* text) {
+
+}
