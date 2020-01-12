@@ -54,6 +54,8 @@ int main() {
     }
     PUSH_LT(lt, renderer, SDL_DestroyRenderer);
     SDL_ShowCursor(0);
+    worldRenderer wrldRenderer = { renderer, (Vector) { 0, 0 } };
+    worldRenderer* wRenderer = &wrldRenderer;
 
     /* Texture loading */
     SDL_Texture* cursorTexture = IMG_LoadTexture(renderer, "./textures/cursor.png");
@@ -179,12 +181,12 @@ int main() {
 
         switch (gm) {
         case PLAYING:
-            worldDraw(renderer, &gameState);
-            renderRect(renderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
+            worldDraw(wRenderer, &gameState);
+            renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
             break;
         case MAPEDIT:
-            renderRect(renderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
-            mapEditDraw(renderer, &editorState);
+            renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
+            mapEditDraw(wRenderer, &editorState);
             break;
         }
 

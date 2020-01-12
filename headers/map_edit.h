@@ -82,4 +82,4 @@ void mapAddPathChar(int i, mapEditorState* es);
 void mapHandleInput(int* KEYS, mapEditorState* es);
 void mapHandleMouseClick(int button, mapEditorState* es);
 void mapEditUpdate(mapEditorState* es);
-void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es);
+void mapEditDraw(worldRenderer* renderer, mapEditorState* es);

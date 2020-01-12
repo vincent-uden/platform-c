@@ -417,7 +417,7 @@ void mapEditUpdate(mapEditorState* es) {
     es->mousePos.y = mouseY;
 }
 
-void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
+void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     es->cursorRect->x = es->mousePos.x;
     es->cursorRect->y = es->mousePos.y;
     if ( es->cursorState == 1 ) {
@@ -433,7 +433,7 @@ void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
         currNode = currNode->next;
     }
 
-    SDL_RenderCopy(renderer, es->cursorTexture, NULL, es->cursorRect);
+    SDL_RenderCopy(renderer->renderer, es->cursorTexture, NULL, es->cursorRect);
 
     SDL_Rect lastRect = renderText(renderer, "MAP EDITOR", TRIGHT, (Vector) { SCREEN_WIDTH * 0.99, 0 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     if ( es->currTool == SELECT ) {

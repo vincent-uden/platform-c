@@ -31,7 +31,7 @@ void worldUpdate(worldState* ws) {
     return;
 }
 
-void worldDraw(SDL_Renderer* renderer, worldState* ws) {
+void worldDraw(worldRenderer* renderer, worldState* ws) {
     for ( int i = 0; i < ws->rectAmount; i++ ) {
         renderRect(renderer, RECT_COLOR, ws->rects[i].position, ws->rects[i].size);
     }
