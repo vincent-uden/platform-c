@@ -31,16 +31,18 @@ void renderRect(SDL_Renderer* renderer, int color, Vector pos, Vector size) {
         bmask,
         amask
     );
+    PUSH_LT(lt, image, SDL_FreeSurface);
 
     SDL_FillRect(image, NULL, color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, image);
+    PUSH_LT(lt, texture, SDL_DestroyTexture);
     SDL_Rect dst = { pos.x, pos.y, size.x, size.y };
     SDL_Point rotcenter = { 0, 0 };
 
     SDL_RenderCopyEx(renderer, texture, NULL, &dst, 0, NULL, SDL_FLIP_NONE);
 
-    SDL_FreeSurface(image);
-    SDL_DestroyTexture(texture);
+    POP_LT_PTR(lt, image);
+    POP_LT_PTR(lt, texture);
 }
 
 SDL_Rect renderTextBackend(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font) {
