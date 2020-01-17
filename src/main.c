@@ -160,6 +160,7 @@ int main() {
             for ( int i = 0; i < 10; i++ ) {
                 playerUpdate(&player, deltaTime / 10, &gameState);
             }
+            wrldRenderer.position = VectorSub(player.position, (Vector) { SCREEN_WIDTH / 2 - PLAYERSIZE / 2, SCREEN_HEIGHT / 2 - PLAYERSIZE / 2});
             break;
         case MAPEDIT:
             for ( int i = 0; i < 5; i++ ) {
