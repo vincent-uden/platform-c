@@ -12,6 +12,8 @@
     Uint32 amask = 0xFF000000;
 #endif
 
+
+// TODO: Separate UI rendering and world rendering somehow
 void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
     if ( size.x < 0 ) {
         size.x *= -1;
@@ -36,7 +38,7 @@ void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
     SDL_FillRect(image, NULL, color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer->renderer, image);
     PUSH_LT(lt, texture, SDL_DestroyTexture);
-    SDL_Rect dst = { pos.x, pos.y, size.x, size.y };
+    SDL_Rect dst = { pos.x - renderer->position.x, pos.y - renderer->position.y, size.x, size.y };
     SDL_Point rotcenter = { 0, 0 };
 
     SDL_RenderCopyEx(renderer->renderer, texture, NULL, &dst, 0, NULL, SDL_FLIP_NONE);
@@ -46,6 +48,7 @@ void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
 }
 
 SDL_Rect renderTextBackend(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font) {
+    VectorSubIp(&pos, renderer->position);
     SDL_Surface* msgSurf = TTF_RenderText_Blended(font, text, color);
     PUSH_LT(lt, msgSurf, SDL_FreeSurface);
     SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer->renderer, msgSurf);
@@ -88,7 +91,7 @@ SDL_Rect renderPopup(worldRenderer* renderer, char* text) {
     int marginX = 40; int marginY = 15;
     int border = 5;
 
-    Vector innerRectPos  = { txtRect.x - marginX, txtRect.y - marginY };
+    Vector innerRectPos  = { txtRect.x - marginX - renderer->position.x, txtRect.y - marginY - renderer->position.y };
     Vector innerRectSize = { txtRect.w + marginX * 2, txtRect.h + marginY * 2 };
     Vector outerRectPos  = { innerRectPos.x - border, innerRectPos.y - border };
     Vector outerRectSize = { innerRectSize.x + border * 2, innerRectSize.y + border * 2 };
@@ -120,7 +123,7 @@ SDL_Rect renderConfirmPopup(worldRenderer* renderer, char* text) {
     int marginX = 40; int marginY = 30;
     int border = 5;
 
-    Vector innerRectPos  = { txtRect.x - marginX, txtRect.y - marginY };
+    Vector innerRectPos  = { txtRect.x - marginX - renderer->position.x, txtRect.y - marginY - renderer->position.y };
     Vector innerRectSize = { txtRect.w + marginX * 2, txtRect.h + marginY * 2 };
     Vector outerRectPos  = { innerRectPos.x - border, innerRectPos.y - border };
     Vector outerRectSize = { innerRectSize.x + border * 2, innerRectSize.y + border * 2 };
