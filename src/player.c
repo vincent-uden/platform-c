@@ -152,4 +152,11 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
             }
         }
     }
+
+     /* If the player has any y-speed here it can't have collided with a floor
+      * therefore it can't jump. Jumpsleft must be set to zero.
+      */
+    if ( player->speed.y != 0 ) {
+        player->jumpsLeft = 0;
+    }
 }
