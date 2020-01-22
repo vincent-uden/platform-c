@@ -17,14 +17,28 @@ extern Lifetime lt;
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
-
 enum textAdjust {TLEFT, TRIGHT};
 
-void renderRect(SDL_Renderer* renderer, int color, Vector pos, Vector size);
+typedef struct {
+  SDL_Renderer* renderer;
 
-SDL_Rect renderTextBackend(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font);
-SDL_Rect renderText(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color);
-SDL_Rect renderTextSmall(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color);
+  Vector position;
+} worldRenderer;
 
-SDL_Rect renderPopup(SDL_Renderer* renderer, char* text);
-SDL_Rect renderConfirmPopup(SDL_Renderer* renderer, char* text);
+typedef struct {
+    SDL_Texture* tx;
+
+    Vector position;
+    Vector size;
+} renderLayer;
+
+renderLayer createRenderLayer(worldRenderer* renderer, Vector size);
+
+void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size);
+
+SDL_Rect renderTextBackend(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font);
+SDL_Rect renderText(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color);
+SDL_Rect renderTextSmall(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color);
+
+SDL_Rect renderPopup(worldRenderer* renderer, char* text);
+SDL_Rect renderConfirmPopup(worldRenderer* renderer, char* text);

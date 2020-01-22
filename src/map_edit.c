@@ -339,7 +339,7 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
     }
 }
 
-void mapHandleMouseClick(int button, mapEditorState* es) {
+void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer) {
     switch ( es->currTool ) {
     case SELECT:
         if ( button == 1 ) {
@@ -364,8 +364,8 @@ void mapHandleMouseClick(int button, mapEditorState* es) {
                 es->cursorState = 1;
                 int mouseX, mouseY;
                 SDL_GetMouseState(&mouseX, &mouseY);
-                es->prevMousePos.x = mouseX;
-                es->prevMousePos.y = mouseY;
+                es->prevMousePos.x = mouseX + renderer->position.x;
+                es->prevMousePos.y = mouseY + renderer->position.y;
             } else if ( es->cursorState == 1 ) {
                 es->cursorState = 0;
                 rectNode* newNode;
@@ -381,7 +381,7 @@ void mapHandleMouseClick(int button, mapEditorState* es) {
                     newNode = addRectNode(es->rl);
                 }
                 Vector newPos = es->prevMousePos;
-                Vector newSize = VectorSub(es->mousePos, es->prevMousePos);
+                Vector newSize = VectorSub(VectorAdd(es->mousePos, renderer->position), es->prevMousePos);
                 if ( newSize.x < 0 ) {
                     newSize.x *= -1;
                     newPos.x -= newSize.x;
@@ -417,11 +417,12 @@ void mapEditUpdate(mapEditorState* es) {
     es->mousePos.y = mouseY;
 }
 
-void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
+void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
+    /* Render Things in World */
     es->cursorRect->x = es->mousePos.x;
     es->cursorRect->y = es->mousePos.y;
     if ( es->cursorState == 1 ) {
-        renderRect(renderer, 0x66FFE49E, es->prevMousePos, VectorSub(es->mousePos, es->prevMousePos));
+        renderRect(renderer, 0x66FFE49E, es->prevMousePos, VectorSub(VectorAdd(es->mousePos, renderer->position), es->prevMousePos));
     }
     rectNode* currNode = es->rl;
     while ( currNode != NULL ) {
@@ -433,8 +434,14 @@ void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
         currNode = currNode->next;
     }
 
-    SDL_RenderCopy(renderer, es->cursorTexture, NULL, es->cursorRect);
-
+    /* Render UI */
+    Vector wrldPos = renderer->position;
+    renderer->position = (Vector) { 0, 0 };
+    SDL_SetRenderTarget(renderer->renderer, uiLayer.tx);
+    SDL_SetRenderDrawColor(renderer->renderer, 0x0, 0x0, 0x0, 0x0);
+    SDL_RenderClear(renderer->renderer);
+    SDL_RenderCopy(renderer->renderer, es->cursorTexture, NULL, es->cursorRect);
+    
     SDL_Rect lastRect = renderText(renderer, "MAP EDITOR", TRIGHT, (Vector) { SCREEN_WIDTH * 0.99, 0 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     if ( es->currTool == SELECT ) {
         lastRect = renderText(renderer, "Select (S)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xaa, 0xFF, 0xaa });
@@ -474,4 +481,8 @@ void mapEditDraw(SDL_Renderer* renderer, mapEditorState* es) {
     if ( es->currTool == LOAD_DONE ) {
         renderPopup(renderer, "File loaded!");
     }
+
+    SDL_SetRenderTarget(renderer->renderer, NULL);
+    SDL_RenderCopy(renderer->renderer, uiLayer.tx, NULL, NULL);
+    renderer->position = wrldPos;
 }

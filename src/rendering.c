@@ -12,7 +12,18 @@
     Uint32 amask = 0xFF000000;
 #endif
 
-void renderRect(SDL_Renderer* renderer, int color, Vector pos, Vector size) {
+renderLayer createRenderLayer(worldRenderer* renderer, Vector size) {
+    renderLayer output;
+    output.tx = SDL_CreateTexture(renderer->renderer, 
+        SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, size.x, size.y);
+    PUSH_LT(lt, output.tx, SDL_DestroyTexture);
+    output.size = size;
+    output.position = (Vector) { 0, 0 };
+    SDL_SetTextureBlendMode(output.tx, SDL_BLENDMODE_BLEND);
+    return output;
+}
+
+void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
     if ( size.x < 0 ) {
         size.x *= -1;
         pos.x -= size.x;
@@ -34,21 +45,22 @@ void renderRect(SDL_Renderer* renderer, int color, Vector pos, Vector size) {
     PUSH_LT(lt, image, SDL_FreeSurface);
 
     SDL_FillRect(image, NULL, color);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, image);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer->renderer, image);
     PUSH_LT(lt, texture, SDL_DestroyTexture);
-    SDL_Rect dst = { pos.x, pos.y, size.x, size.y };
+    SDL_Rect dst = { pos.x - renderer->position.x, pos.y - renderer->position.y, size.x, size.y };
     SDL_Point rotcenter = { 0, 0 };
 
-    SDL_RenderCopyEx(renderer, texture, NULL, &dst, 0, NULL, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer->renderer, texture, NULL, &dst, 0, NULL, SDL_FLIP_NONE);
 
     POP_LT_PTR(lt, image);
     POP_LT_PTR(lt, texture);
 }
 
-SDL_Rect renderTextBackend(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font) {
+SDL_Rect renderTextBackend(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font) {
+    VectorSubIp(&pos, renderer->position);
     SDL_Surface* msgSurf = TTF_RenderText_Blended(font, text, color);
     PUSH_LT(lt, msgSurf, SDL_FreeSurface);
-    SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer, msgSurf);
+    SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer->renderer, msgSurf);
     PUSH_LT(lt, msgText, SDL_DestroyTexture);
     SDL_Rect txtRect;
     TTF_SizeText(font, text, &txtRect.w, &txtRect.h);
@@ -56,7 +68,7 @@ SDL_Rect renderTextBackend(SDL_Renderer* renderer, char* text, enum textAdjust a
     if ( adj == TRIGHT ) {
         txtRect.x -= txtRect.w;
     }
-    SDL_RenderCopy(renderer, msgText, NULL, &txtRect);
+    SDL_RenderCopy(renderer->renderer, msgText, NULL, &txtRect);
     POP_LT_PTR(lt, msgSurf);
     POP_LT_PTR(lt, msgText);
     return txtRect;
@@ -64,19 +76,19 @@ SDL_Rect renderTextBackend(SDL_Renderer* renderer, char* text, enum textAdjust a
 
 /* pos refers to top left corner if left adjusted and top right corner if right adjusted
  * Also returns the render rect for further use */
-SDL_Rect renderText(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
+SDL_Rect renderText(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
     return renderTextBackend(renderer, text, adj, pos, color, sansBold);
 }
 
-SDL_Rect renderTextSmall(SDL_Renderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
+SDL_Rect renderTextSmall(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
     return renderTextBackend(renderer, text, adj, pos, color, sansBoldSmall);
 }
 
 /* Always render centered in screen */
-SDL_Rect renderPopup(SDL_Renderer* renderer, char* text) {
+SDL_Rect renderPopup(worldRenderer* renderer, char* text) {
     SDL_Surface* msgSurf = TTF_RenderText_Blended(sansBold, text, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     PUSH_LT(lt, msgSurf, SDL_FreeSurface);
-    SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer, msgSurf);
+    SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer->renderer, msgSurf);
     PUSH_LT(lt, msgText, SDL_DestroyTexture);
     SDL_Rect txtRect;
     TTF_SizeText(sansBold, text, &txtRect.w, &txtRect.h);
@@ -88,7 +100,7 @@ SDL_Rect renderPopup(SDL_Renderer* renderer, char* text) {
     int marginX = 40; int marginY = 15;
     int border = 5;
 
-    Vector innerRectPos  = { txtRect.x - marginX, txtRect.y - marginY };
+    Vector innerRectPos  = { txtRect.x - marginX - renderer->position.x, txtRect.y - marginY - renderer->position.y };
     Vector innerRectSize = { txtRect.w + marginX * 2, txtRect.h + marginY * 2 };
     Vector outerRectPos  = { innerRectPos.x - border, innerRectPos.y - border };
     Vector outerRectSize = { innerRectSize.x + border * 2, innerRectSize.y + border * 2 };
@@ -105,10 +117,10 @@ SDL_Rect renderPopup(SDL_Renderer* renderer, char* text) {
 }
 
 /* Always render centered in screen */
-SDL_Rect renderConfirmPopup(SDL_Renderer* renderer, char* text) {
+SDL_Rect renderConfirmPopup(worldRenderer* renderer, char* text) {
     SDL_Surface* msgSurf = TTF_RenderText_Blended(sansBold, text, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     PUSH_LT(lt, msgSurf, SDL_FreeSurface);
-    SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer, msgSurf);
+    SDL_Texture* msgText = SDL_CreateTextureFromSurface(renderer->renderer, msgSurf);
     PUSH_LT(lt, msgText, SDL_DestroyTexture);
     SDL_Rect txtRect;
     TTF_SizeText(sansBold, text, &txtRect.w, &txtRect.h);
@@ -120,7 +132,7 @@ SDL_Rect renderConfirmPopup(SDL_Renderer* renderer, char* text) {
     int marginX = 40; int marginY = 30;
     int border = 5;
 
-    Vector innerRectPos  = { txtRect.x - marginX, txtRect.y - marginY };
+    Vector innerRectPos  = { txtRect.x - marginX - renderer->position.x, txtRect.y - marginY - renderer->position.y };
     Vector innerRectSize = { txtRect.w + marginX * 2, txtRect.h + marginY * 2 };
     Vector outerRectPos  = { innerRectPos.x - border, innerRectPos.y - border };
     Vector outerRectSize = { innerRectSize.x + border * 2, innerRectSize.y + border * 2 };
