@@ -6,7 +6,7 @@ Player makePlayer(Vector pos) {
         (Vector) { 0, 0 },
         (Vector) { 0, 0 },
         1000,
-        9.82,
+        10000,
         20,
         0
     };
@@ -15,14 +15,14 @@ Player makePlayer(Vector pos) {
 void playerHandleInput(Player* player, int* KEYS) {
     player->acc = (Vector) { 0, 0 };
     if ( KEYS[SDLK_d] ) {
-        player->acc.x += 50000;
+        player->acc.x += 100000;
     }
     if ( KEYS[SDLK_a] ) {
-        player->acc.x -= 50000;
-    }
+        player->acc.x -= 100000;
+   }
     if ( KEYS[SDLK_SPACE] ) {
         if ( player->jumpsLeft > 0 ) {
-            player->acc.y -= player->grav * 20000;
+            player->acc.y -= player->grav * 15;
             player->jumpsLeft--;
         }
     }
@@ -40,7 +40,7 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
     VectorAddIp(&(player->acc), VectorDiv(airRes, player->mass));
 
     VectorAddIp(&(player->speed), VectorMul(player->acc, deltaTime));
-    VectorAddIp(&player->speed, VectorMul((Vector) { 0, player->grav * 1500 }, deltaTime));
+    VectorAddIp(&player->speed, VectorMul((Vector) { 0, player->grav}, deltaTime));
     /* Some clamping to avoid minimal sliding */
     if ( fabs(player->speed.x) < 40 ) {
         player->speed.x = 0;
