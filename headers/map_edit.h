@@ -13,6 +13,7 @@
 
 extern Lifetime lt;
 extern const int SCREEN_WIDTH;
+extern renderLayer uiLayer;
 
 enum tool {
     SELECT,
@@ -80,6 +81,6 @@ void saveMapFile(mapFile* mf);
 
 void mapAddPathChar(int i, mapEditorState* es);
 void mapHandleInput(int* KEYS, mapEditorState* es);
-void mapHandleMouseClick(int button, mapEditorState* es);
+void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer);
 void mapEditUpdate(mapEditorState* es);
 void mapEditDraw(worldRenderer* renderer, mapEditorState* es);

@@ -17,7 +17,6 @@ extern Lifetime lt;
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
-
 enum textAdjust {TLEFT, TRIGHT};
 
 typedef struct {
@@ -25,6 +24,15 @@ typedef struct {
 
   Vector position;
 } worldRenderer;
+
+typedef struct {
+    SDL_Texture* tx;
+
+    Vector position;
+    Vector size;
+} renderLayer;
+
+renderLayer createRenderLayer(worldRenderer* renderer, Vector size);
 
 void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size);
 

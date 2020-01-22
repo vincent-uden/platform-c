@@ -16,6 +16,8 @@ const int SCREEN_HEIGHT = 768;
 
 enum game_mode {PLAYING, MAPEDIT};
 
+renderLayer uiLayer;
+
 Lifetime lt;
 TTF_Font* sansBold;
 TTF_Font* sansBoldSmall;
@@ -56,6 +58,7 @@ int main() {
     SDL_ShowCursor(0);
     worldRenderer wrldRenderer = { renderer, (Vector) { 0, 0 } };
     worldRenderer* wRenderer = &wrldRenderer;
+    uiLayer = createRenderLayer(wRenderer, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
 
     /* Texture loading */
     SDL_Texture* cursorTexture = IMG_LoadTexture(renderer, "./textures/cursor.png");
@@ -165,7 +168,7 @@ int main() {
         case MAPEDIT:
             for ( int i = 0; i < 5; i++ ) {
                 if ( MBUTTONS[i] ) {
-                    mapHandleMouseClick(i + 1, &editorState);
+                    mapHandleMouseClick(i + 1, &editorState, wRenderer);
                     MBUTTONS[i] = 0;
                 }
             }
