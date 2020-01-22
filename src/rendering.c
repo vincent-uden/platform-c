@@ -12,8 +12,6 @@
     Uint32 amask = 0xFF000000;
 #endif
 
-// TODO: Use renderlayers, switching between layers will probaly be done 
-// with SDL_SetRenderTarget or something on the renderer.
 renderLayer createRenderLayer(worldRenderer* renderer, Vector size) {
     renderLayer output;
     output.tx = SDL_CreateTexture(renderer->renderer, 
@@ -25,7 +23,6 @@ renderLayer createRenderLayer(worldRenderer* renderer, Vector size) {
     return output;
 }
 
-// TODO: Separate UI rendering and world rendering somehow
 void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
     if ( size.x < 0 ) {
         size.x *= -1;
