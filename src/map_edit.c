@@ -348,8 +348,11 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
                 es->currTool = TYPING_PATH;
             }
             rectNode* currNode = es->rl;
+            editorRect currRect;
             while ( currNode != NULL ) {
-                if ( isMouseInRect(currNode->value) ) {
+                currRect = currNode->value;
+                VectorSubIp(&(currRect.position), renderer->position);
+                if ( isMouseInRect(currRect) ) {
                     currNode->value.selected = 1;
                 } else {
                     currNode->value.selected = 0;
