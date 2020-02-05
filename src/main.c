@@ -63,11 +63,17 @@ int main() {
     /* Texture loading */
     SDL_Texture* cursorTexture = IMG_LoadTexture(renderer, "./textures/cursor.png");
     PUSH_LT(lt, cursorTexture, SDL_DestroyTexture);
-    SDL_Rect cursorRect;
+    SDL_Texture* bgTexture = IMG_LoadTexture(renderer, "./textures/bg.png");
+    PUSH_LT(lt, bgTexture, SDL_DestroyTexture);
+    SDL_Rect cursorRect, bgRect;
     cursorRect.x = 0;
     cursorRect.y = 0;
     cursorRect.w = 12;
     cursorRect.h = 21;
+    bgRect.x = 0;
+    bgRect.y = 0;
+    bgRect.w = 512;
+    bgRect.h = 512;
     /* End of texture loading */
 
     /* Font Loading */
@@ -124,8 +130,6 @@ int main() {
                 running = 0;
                 break;
             case SDL_KEYDOWN:
-                // Paragraph to switch to map editor
-                printf("Key: %d\n", e.key.keysym.sym);
                 if ( e.key.keysym.sym ==  SDLK_f ) {
                     if ( gm == PLAYING ) {
                         gm = MAPEDIT;
@@ -182,6 +186,7 @@ int main() {
         /* Clear Screen */
         SDL_SetRenderDrawColor(renderer, 0x31, 0x31, 0x31, 0xFF);
         SDL_RenderClear(renderer);
+        renderBackground(wRenderer, bgTexture, bgRect);
 
         switch (gm) {
         case PLAYING:
