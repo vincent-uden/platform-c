@@ -56,6 +56,31 @@ void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
     POP_LT_PTR(lt, texture);
 }
 
+void renderBackground(worldRenderer* renderer, SDL_Texture* bgTexture, SDL_Rect txtRect) {
+    int txWidth = txtRect.w;
+    int txHeight = txtRect.h;
+    SDL_Rect txRect;
+    // TODO: Positions aren't quite right
+    for ( int y = 0; y < SCREEN_HEIGHT + txHeight; y += txHeight ) {
+        for ( int x = 0; x < SCREEN_WIDTH + txWidth; x += txWidth ) {
+            txRect.x = (int) renderer->position.x % txWidth;
+            txRect.y = (int) renderer->position.y % txHeight;
+            if ( txRect.x < 0 ) {
+                txRect.x += txWidth;
+            }
+            if ( txRect.y < 0 ) {
+                txRect.y += txHeight;
+            }
+            txRect.x = -txRect.x + x;
+            txRect.y = -txRect.y + y;
+
+            txRect.w = txWidth;
+            txRect.h = txHeight;
+            SDL_RenderCopy(renderer->renderer, bgTexture, NULL, &txRect);
+        }
+    }
+}
+
 SDL_Rect renderTextBackend(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font) {
     VectorSubIp(&pos, renderer->position);
     SDL_Surface* msgSurf = TTF_RenderText_Blended(font, text, color);

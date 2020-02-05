@@ -35,6 +35,7 @@ typedef struct {
 renderLayer createRenderLayer(worldRenderer* renderer, Vector size);
 
 void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size);
+void renderBackground(worldRenderer* renderer, SDL_Texture* bgTexture, SDL_Rect txtRect);
 
 SDL_Rect renderTextBackend(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font);
 SDL_Rect renderText(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color);
