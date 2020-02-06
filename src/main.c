@@ -158,6 +158,9 @@ int main() {
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
         deltaTime = (double) ((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
+        if ( deltaTime > 0.1 ) {
+            deltaTime = 0.1;
+        }
 
         /* Updating */
         switch (gm) {
