@@ -18,6 +18,7 @@ extern renderLayer uiLayer;
 enum tool {
     SELECT,
     RECT,
+    PAN,
     TYPING_PATH,
     SAVE_CONFIRM,
     SAVE_DONE,
@@ -49,9 +50,12 @@ typedef struct {
 typedef struct {
     Vector prevMousePos;
     Vector mousePos;
+    Vector panStartPos;
+    Vector panStartCamera;
     rectList rl;
     int cursorState;
     enum tool currTool;
+    enum tool prevTool;
 
     mapFile* mf;
 
@@ -82,5 +86,6 @@ void saveMapFile(mapFile* mf);
 void mapAddPathChar(int i, mapEditorState* es);
 void mapHandleInput(int* KEYS, mapEditorState* es);
 void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer);
-void mapEditUpdate(mapEditorState* es);
+void mapHandleMouseRelease(int button, mapEditorState* es, worldRenderer* renderer);
+void mapEditUpdate(mapEditorState* es, worldRenderer* renderer);
 void mapEditDraw(worldRenderer* renderer, mapEditorState* es);

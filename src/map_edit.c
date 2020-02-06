@@ -340,6 +340,18 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
 }
 
 void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer) {
+    if ( button == 2 ) {
+        /* View panning */
+        if ( es->currTool != PAN ) {
+            es->prevTool = es->currTool;
+            es->currTool = PAN;
+            int mX, mY;
+            SDL_GetMouseState(&mX, &mY);
+            es->panStartPos.x = mX;
+            es->panStartPos.y = mY;
+            es->panStartCamera = renderer->position;
+        }
+    }
     switch ( es->currTool ) {
     case SELECT:
         if ( button == 1 ) {
@@ -413,11 +425,26 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
     }
 }
 
-void mapEditUpdate(mapEditorState* es) {
+void mapHandleMouseRelease(int button, mapEditorState* es, worldRenderer* renderer) {
+    if ( button == 2 ) {
+        /* View panning */
+        es->currTool = es->prevTool;
+    }
+}
+
+void mapEditUpdate(mapEditorState* es, worldRenderer* renderer) {
     int mouseX, mouseY;
     SDL_GetMouseState(&mouseX, &mouseY);
     es->mousePos.x = mouseX;
     es->mousePos.y = mouseY;
+    if ( es->currTool == PAN ) {
+        int mX, mY;
+        SDL_GetMouseState(&mX, &mY);
+        Vector mDelta = (Vector) { mX, mY };
+        renderer->position = es->panStartCamera;
+        VectorAddIp(&(renderer->position), es->panStartPos);
+        VectorSubIp(&(renderer->position), mDelta);
+    }
 }
 
 void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {

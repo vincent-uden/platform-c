@@ -96,6 +96,10 @@ int main() {
     for ( int i = 0; i < 5; i++ ) {
         MBUTTONS[i] = 0;
     }
+    int MBUTTONSR[5];
+    for ( int i = 0; i < 5; i++ ) {
+        MBUTTONSR[i] = 0;
+    }
 
     Uint64 NOW = SDL_GetPerformanceCounter();
     Uint64 LAST = 0;
@@ -149,6 +153,7 @@ int main() {
                 MBUTTONS[e.button.button - 1] = 1;
                 break;
             case SDL_MOUSEBUTTONUP:
+                MBUTTONSR[e.button.button - 1] = 1;
                 break;
             default:
                 break;
@@ -178,9 +183,13 @@ int main() {
                     mapHandleMouseClick(i + 1, &editorState, wRenderer);
                     MBUTTONS[i] = 0;
                 }
+                if ( MBUTTONSR[i] ) {
+                    mapHandleMouseRelease(i + 1, &editorState, wRenderer);
+                    MBUTTONSR[i] = 0;
+                }
             }
             mapHandleInput(KEYS, &editorState);
-            mapEditUpdate(&editorState);
+            mapEditUpdate(&editorState, wRenderer);
             break;
         default:
             break;
