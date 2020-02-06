@@ -33,6 +33,7 @@ void worldUpdate(worldState* ws) {
 
 void worldDraw(worldRenderer* renderer, worldState* ws) {
     for ( int i = 0; i < ws->rectAmount; i++ ) {
+        renderRect(renderer, RECT_SHADOW, VectorAdd(ws->rects[i].position, (Vector) { 5, 10 }), ws->rects[i].size);
         renderRect(renderer, RECT_COLOR, ws->rects[i].position, ws->rects[i].size);
     }
 }
