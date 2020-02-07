@@ -10,8 +10,8 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -g -ggdb -std=c99 -pedantic
-LDFLAGS = -lm -lSDL2 -lSDL2_gfx -lSDL2_image -lSDL2_ttf
+CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -pg -ggdb -std=c99 -pedantic
+LDFLAGS = -lm -lSDL2 -lSDL2_gfx -lSDL2_image -lSDL2_ttf -pg
 CC = gcc
 CXX = g++
 

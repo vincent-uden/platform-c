@@ -202,8 +202,9 @@ int main() {
 
         switch (gm) {
         case PLAYING:
-            worldDraw(wRenderer, &gameState);
+            renderRect(wRenderer, RECT_SHADOW, VectorAdd(player.position, (Vector) { 5, 10 }), (Vector) { PLAYERSIZE, PLAYERSIZE });
             renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
+            worldDraw(wRenderer, &gameState);
             break;
         case MAPEDIT:
             renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
@@ -216,6 +217,7 @@ int main() {
 
         if ( frames % 100 == 0 )
             printLt(lt);
+        printf("%f\n", deltaTime);
     }
 
     exit(0);

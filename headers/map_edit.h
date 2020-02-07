@@ -7,9 +7,10 @@
 #include "./rendering.h"
 #include "./lifetime.h"
 
-#define RECT_COLOR 0xFFFFE49E
+#define RECT_COLOR      0xFFFFE49E
+#define RECT_SHADOW     0x44000000
 #define EDIT_RECT_COLOR 0xaaFFE49E
-#define SEL_RECT_COLOR 0xaa68ed81
+#define SEL_RECT_COLOR  0xaa68ed81
 
 extern Lifetime lt;
 extern const int SCREEN_WIDTH;
