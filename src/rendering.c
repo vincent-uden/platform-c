@@ -52,8 +52,8 @@ void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
 
     SDL_RenderCopyEx(renderer->renderer, texture, NULL, &dst, 0, NULL, SDL_FLIP_NONE);
 
-    POP_LT_PTR(lt, image);
-    POP_LT_PTR(lt, texture);
+    POP_LT(lt);
+    POP_LT(lt);
 }
 
 void renderBackground(worldRenderer* renderer, SDL_Texture* bgTexture, SDL_Rect txtRect) {
@@ -94,8 +94,8 @@ SDL_Rect renderTextBackend(worldRenderer* renderer, char* text, enum textAdjust 
         txtRect.x -= txtRect.w;
     }
     SDL_RenderCopy(renderer->renderer, msgText, NULL, &txtRect);
-    POP_LT_PTR(lt, msgSurf);
-    POP_LT_PTR(lt, msgText);
+    POP_LT(lt);
+    POP_LT(lt);
     return txtRect;
 }
 
@@ -135,8 +135,8 @@ SDL_Rect renderPopup(worldRenderer* renderer, char* text) {
     renderRect(renderer, 0xFF222222, innerRectPos, innerRectSize);
     renderText(renderer, text, TLEFT, txtPos, (SDL_Color) { 0xFF, 0xFF, 0xFF });
 
-    POP_LT_PTR(lt, msgSurf);
-    POP_LT_PTR(lt, msgText);
+    POP_LT(lt);
+    POP_LT(lt);
 
     return (SDL_Rect) { outerRectPos.x, outerRectPos.y, outerRectSize.x, outerRectSize.y };
 }
@@ -174,8 +174,8 @@ SDL_Rect renderConfirmPopup(worldRenderer* renderer, char* text) {
     txtPos.y -= 15;
     renderTextSmall(renderer, "Yes (Enter)   No (Esc)", TLEFT, txtPos, (SDL_Color) { 0xFF, 0xFF, 0xFF });
 
-    POP_LT_PTR(lt, msgSurf);
-    POP_LT_PTR(lt, msgText);
+    POP_LT(lt);
+    POP_LT(lt);
 
     return (SDL_Rect) { outerRectPos.x, outerRectPos.y, outerRectSize.x, outerRectSize.y };
 }

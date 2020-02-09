@@ -107,8 +107,8 @@ mapFile loadMapFile(char* fp) {
     f = fopen(fp, "r");
     PUSH_LT(lt, f, fclose);
     if ( !f ) {
-        POP_LT_PTR(lt, buf);
-        POP_LT_PTR(lt, f);
+        POP_LT(lt);
+        POP_LT(lt);
         output.path = NULL;
         return output;
     }
