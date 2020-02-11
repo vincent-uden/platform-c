@@ -5,6 +5,7 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 #include "../headers/lifetime.h"
+#include "../headers/pause.h"
 #include "../headers/player.h"
 #include "../headers/physics.h"
 #include "../headers/rendering.h"
@@ -14,9 +15,12 @@
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 
-enum game_mode {PLAYING, MAPEDIT};
+enum game_mode {PLAYING, MAPEDIT, PAUSED};
+const int pauseMenuLen = 2;
+const char* menuTexts[] = {"Resume","Exit"};
 
 renderLayer uiLayer;
+renderLayer pauseLayer;
 
 Lifetime lt;
 TTF_Font* sansBold;
@@ -59,6 +63,7 @@ int main() {
     worldRenderer wrldRenderer = { renderer, (Vector) { 0, 0 } };
     worldRenderer* wRenderer = &wrldRenderer;
     uiLayer = createRenderLayer(wRenderer, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
+    pauseLayer = createRenderLayer(wRenderer, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
 
     /* Texture loading */
     SDL_Texture* cursorTexture = IMG_LoadTexture(renderer, "./textures/cursor.png");
@@ -119,6 +124,8 @@ int main() {
     worldState gameState;
     gameState.rects = NULL;
     gameState.rectAmount = 0;
+    pauseMenuState pauseState;
+    pauseState.selectedIndex = 0;
 
     mapFile testMap = loadMapFile("./test-map.txt");
     editorState.rl = testMap.rl;
@@ -140,6 +147,13 @@ int main() {
                     } else if ( gm == MAPEDIT && editorState.currTool != TYPING_PATH ) {
                         gm = PLAYING;
                         worldSetRects(&gameState, &editorState);
+                    }
+                }
+                if ( e.key.keysym.sym == SDLK_ESCAPE ) {
+                    if ( gm == PLAYING ) {
+                        gm = PAUSED;
+                    } else {
+                        gm = PLAYING;
                     }
                 }
                 if ( e.key.keysym.sym < 322  && e.key.keysym.sym >= 0 )
@@ -209,6 +223,12 @@ int main() {
         case MAPEDIT:
             renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
             mapEditDraw(wRenderer, &editorState);
+            break;
+        case PAUSED:
+            renderRect(wRenderer, RECT_SHADOW, VectorAdd(player.position, (Vector) { 5, 10 }), (Vector) { PLAYERSIZE, PLAYERSIZE });
+            renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
+            worldDraw(wRenderer, &gameState);
+            pauseMenuDraw(&pauseState, wRenderer);
             break;
         }
 
