@@ -1,7 +1,20 @@
 #include "../headers/pause.h"
 
 void pauseMenuHandleInput(int* KEYS, pauseMenuState* ps) {
-
+    /* Up */
+    if ( KEYS[SDLK_w] ) {
+        if ( ps->selectedIndex > 0 ) {
+            ps->selectedIndex--;
+        }
+        KEYS[SDLK_w] = 0;
+    }
+    /* Down */
+    if ( KEYS[SDLK_s] ) {
+        if ( ps->selectedIndex < pauseMenuLen - 1 ) {
+            ps->selectedIndex++;
+        }
+        KEYS[SDLK_s] = 0;
+    }
 }
 
 void pauseMenuUpdate(pauseMenuState* ps, worldRenderer* renderer) {
@@ -15,9 +28,15 @@ void pauseMenuDraw(pauseMenuState* ps, worldRenderer* renderer) {
     SDL_SetRenderDrawColor(renderer->renderer, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(renderer->renderer);
 
-    SDL_Rect lastRect = (SDL_Rect) { 10, 10, 0, 0 };
+    renderRect(renderer, 0x44000000, (Vector) { 0, 0 }, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
+
+    SDL_Rect lastRect = (SDL_Rect) { 10, 40, 0, 0 };
     for ( int i = 0; i < pauseMenuLen; i++ ) {
-        lastRect = renderText(renderer, (char*) menuTexts[i], TLEFT, (Vector) { 10, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+        if ( i == ps->selectedIndex ) {
+            lastRect = renderTextHuge(renderer, (char*) menuTexts[i], TLEFT, (Vector) { 50, lastRect.y + lastRect.h}, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+        } else {
+            lastRect = renderText(renderer, (char*) menuTexts[i], TLEFT, (Vector) { 40, lastRect.y + lastRect.h}, (SDL_Color) { 0xFF, 0xFF, 0xFF, 0xcc});
+        }
     }
 
     SDL_SetRenderTarget(renderer->renderer, NULL);

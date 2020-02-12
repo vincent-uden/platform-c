@@ -16,8 +16,8 @@ const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 
 enum game_mode {PLAYING, MAPEDIT, PAUSED};
-const int pauseMenuLen = 2;
-const char* menuTexts[] = {"Resume","Exit"};
+const int pauseMenuLen = 4;
+const char* menuTexts[] = {"Resume", "Controls", "Settings", "Exit"};
 
 renderLayer uiLayer;
 renderLayer pauseLayer;
@@ -25,6 +25,8 @@ renderLayer pauseLayer;
 Lifetime lt;
 TTF_Font* sansBold;
 TTF_Font* sansBoldSmall;
+TTF_Font* sansBoldBig;
+TTF_Font* sansBoldHuge;
 
 int main() {
     lt = createLt();
@@ -83,8 +85,10 @@ int main() {
 
     /* Font Loading */
     TTF_Init();
-    sansBold = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 32);
+    sansBold      = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 32);
     sansBoldSmall = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 22);
+    sansBoldBig   = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 46);
+    sansBoldHuge  = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 60);
     /* End of font loading */
 
     Player player = makePlayer((Vector) { 100, 100 });
@@ -204,6 +208,9 @@ int main() {
             }
             mapHandleInput(KEYS, &editorState);
             mapEditUpdate(&editorState, wRenderer);
+            break;
+        case PAUSED:
+            pauseMenuHandleInput(KEYS, &pauseState);
             break;
         default:
             break;
