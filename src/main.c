@@ -5,6 +5,7 @@
 #include <SDL2/SDL2_gfxPrimitives.h>
 
 #include "../headers/lifetime.h"
+#include "../headers/pause.h"
 #include "../headers/player.h"
 #include "../headers/physics.h"
 #include "../headers/rendering.h"
@@ -14,13 +15,18 @@
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 
-enum game_mode {PLAYING, MAPEDIT};
+enum game_mode {PLAYING, MAPEDIT, PAUSED};
+const int pauseMenuLen = 4;
+const char* menuTexts[] = {"Resume", "Controls", "Settings", "Exit"};
 
 renderLayer uiLayer;
+renderLayer pauseLayer;
 
 Lifetime lt;
 TTF_Font* sansBold;
 TTF_Font* sansBoldSmall;
+TTF_Font* sansBoldBig;
+TTF_Font* sansBoldHuge;
 
 int main() {
     lt = createLt();
@@ -59,6 +65,7 @@ int main() {
     worldRenderer wrldRenderer = { renderer, (Vector) { 0, 0 } };
     worldRenderer* wRenderer = &wrldRenderer;
     uiLayer = createRenderLayer(wRenderer, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
+    pauseLayer = createRenderLayer(wRenderer, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
 
     /* Texture loading */
     SDL_Texture* cursorTexture = IMG_LoadTexture(renderer, "./textures/cursor.png");
@@ -78,8 +85,10 @@ int main() {
 
     /* Font Loading */
     TTF_Init();
-    sansBold = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 32);
+    sansBold      = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 32);
     sansBoldSmall = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 22);
+    sansBoldBig   = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 46);
+    sansBoldHuge  = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 60);
     /* End of font loading */
 
     Player player = makePlayer((Vector) { 100, 100 });
@@ -119,6 +128,8 @@ int main() {
     worldState gameState;
     gameState.rects = NULL;
     gameState.rectAmount = 0;
+    pauseMenuState pauseState;
+    pauseState.selectedIndex = 0;
 
     mapFile testMap = loadMapFile("./test-map.txt");
     editorState.rl = testMap.rl;
@@ -126,6 +137,7 @@ int main() {
     worldSetRects(&gameState, &editorState);
 
     running = 1;
+    int pauseReturn;
 
     while ( running ) {
         while ( SDL_PollEvent(&e) != 0 ) {
@@ -140,6 +152,13 @@ int main() {
                     } else if ( gm == MAPEDIT && editorState.currTool != TYPING_PATH ) {
                         gm = PLAYING;
                         worldSetRects(&gameState, &editorState);
+                    }
+                }
+                if ( e.key.keysym.sym == SDLK_ESCAPE ) {
+                    if ( gm == PLAYING ) {
+                        gm = PAUSED;
+                    } else {
+                        gm = PLAYING;
                     }
                 }
                 if ( e.key.keysym.sym < 322  && e.key.keysym.sym >= 0 )
@@ -191,6 +210,15 @@ int main() {
             mapHandleInput(KEYS, &editorState);
             mapEditUpdate(&editorState, wRenderer);
             break;
+        case PAUSED:
+            pauseReturn = pauseMenuHandleInput(KEYS, &pauseState);
+            if ( pauseReturn == -1 ) {
+                running = 0;
+            }
+            if ( pauseReturn == 1 ) {
+                gm = PLAYING;
+            }
+            break;
         default:
             break;
         }
@@ -209,6 +237,12 @@ int main() {
         case MAPEDIT:
             renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
             mapEditDraw(wRenderer, &editorState);
+            break;
+        case PAUSED:
+            renderRect(wRenderer, RECT_SHADOW, VectorAdd(player.position, (Vector) { 5, 10 }), (Vector) { PLAYERSIZE, PLAYERSIZE });
+            renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
+            worldDraw(wRenderer, &gameState);
+            pauseMenuDraw(&pauseState, wRenderer);
             break;
         }
 

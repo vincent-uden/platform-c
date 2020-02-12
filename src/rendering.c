@@ -109,6 +109,14 @@ SDL_Rect renderTextSmall(worldRenderer* renderer, char* text, enum textAdjust ad
     return renderTextBackend(renderer, text, adj, pos, color, sansBoldSmall);
 }
 
+SDL_Rect renderTextBig(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
+    return renderTextBackend(renderer, text, adj, pos, color, sansBoldBig);
+}
+
+SDL_Rect renderTextHuge(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color) {
+    return renderTextBackend(renderer, text, adj, pos, color, sansBoldHuge);
+}
+
 /* Always render centered in screen */
 SDL_Rect renderPopup(worldRenderer* renderer, char* text) {
     SDL_Surface* msgSurf = TTF_RenderText_Blended(sansBold, text, (SDL_Color) { 0xFF, 0xFF, 0xFF });
