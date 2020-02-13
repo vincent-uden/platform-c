@@ -39,6 +39,9 @@ void pauseMenuDraw(pauseMenuState* ps, worldRenderer* renderer) {
         }
     }
 
+    lastRect = renderTextSmall(renderer, "Platform C - Alpha version 0.1", TRIGHT, (Vector) { SCREEN_WIDTH - 10, 10}, (SDL_Color) { 0xDD, 0xFF, 0xFF});
+    lastRect = renderTextSmall(renderer, "github.com/vincent-uden/platform-c", TRIGHT, (Vector) { SCREEN_WIDTH - 10, SCREEN_HEIGHT - 40}, (SDL_Color) { 0xDD, 0xFF, 0xFF});
+
     SDL_SetRenderTarget(renderer->renderer, NULL);
     SDL_RenderCopy(renderer->renderer, pauseLayer.tx, NULL, NULL);
     renderer->position = wrldPos;
