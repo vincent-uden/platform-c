@@ -137,6 +137,7 @@ int main() {
     worldSetRects(&gameState, &editorState);
 
     running = 1;
+    int pauseReturn;
 
     while ( running ) {
         while ( SDL_PollEvent(&e) != 0 ) {
@@ -210,7 +211,13 @@ int main() {
             mapEditUpdate(&editorState, wRenderer);
             break;
         case PAUSED:
-            pauseMenuHandleInput(KEYS, &pauseState);
+            pauseReturn = pauseMenuHandleInput(KEYS, &pauseState);
+            if ( pauseReturn == -1 ) {
+                running = 0;
+            }
+            if ( pauseReturn == 1 ) {
+                gm = PLAYING;
+            }
             break;
         default:
             break;

@@ -18,6 +18,6 @@ typedef struct {
     int selectedIndex;
 } pauseMenuState;
 
-void pauseMenuHandleInput(int* KEYS, pauseMenuState* ps);
+int pauseMenuHandleInput(int* KEYS, pauseMenuState* ps);
 void pauseMenuUpdate(pauseMenuState* ps, worldRenderer* renderer);
 void pauseMenuDraw(pauseMenuState* ps, worldRenderer* renderer);

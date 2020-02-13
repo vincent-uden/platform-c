@@ -1,6 +1,6 @@
 #include "../headers/pause.h"
 
-void pauseMenuHandleInput(int* KEYS, pauseMenuState* ps) {
+int pauseMenuHandleInput(int* KEYS, pauseMenuState* ps) {
     /* Up */
     if ( KEYS[SDLK_w] ) {
         if ( ps->selectedIndex > 0 ) {
@@ -15,6 +15,20 @@ void pauseMenuHandleInput(int* KEYS, pauseMenuState* ps) {
         }
         KEYS[SDLK_s] = 0;
     }
+
+    if ( KEYS[13] ) {
+        switch (ps->selectedIndex) {
+        case 0:
+            /* Resume the game */
+            return 1;
+            break;
+        case 3:
+            /* Exit the program */
+            return -1;
+            break;
+        }
+    }
+    return 0;
 }
 
 void pauseMenuUpdate(pauseMenuState* ps, worldRenderer* renderer) {
