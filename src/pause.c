@@ -2,18 +2,20 @@
 
 int pauseMenuHandleInput(int* KEYS, pauseMenuState* ps) {
     /* Up */
-    if ( KEYS[SDLK_w] ) {
+    if ( KEYS[SDLK_w] || KEYS[SDLK_k] ) {
         if ( ps->selectedIndex > 0 ) {
             ps->selectedIndex--;
         }
         KEYS[SDLK_w] = 0;
+        KEYS[SDLK_k] = 0;
     }
     /* Down */
-    if ( KEYS[SDLK_s] ) {
+    if ( KEYS[SDLK_s] || KEYS[SDLK_j] ) {
         if ( ps->selectedIndex < pauseMenuLen - 1 ) {
             ps->selectedIndex++;
         }
         KEYS[SDLK_s] = 0;
+        KEYS[SDLK_j] = 0;
     }
 
     if ( KEYS[13] ) {
