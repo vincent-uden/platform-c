@@ -17,6 +17,7 @@ typedef struct {
     double air_k;
 
     int jumpsLeft;
+    int holdingJump;
 } Player;
 
 Player makePlayer(Vector pos);
