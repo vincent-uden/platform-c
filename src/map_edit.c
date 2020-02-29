@@ -472,6 +472,8 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     SDL_RenderClear(renderer->renderer);
     SDL_RenderCopy(renderer->renderer, es->cursorTexture, NULL, es->cursorRect);
     
+    renderRect(renderer, 0x32000000, (Vector) { SCREEN_WIDTH - 200, 0 }, (Vector) { 200, 150 });
+    renderRect(renderer, 0x32000000, (Vector) { 0, 0 }, (Vector) { 230, 150 });
     SDL_Rect lastRect = renderText(renderer, "MAP EDITOR", TRIGHT, (Vector) { SCREEN_WIDTH * 0.99, 0 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     SDL_Rect keyRect = (SDL_Rect) { lastRect.x - 6, lastRect.y + lastRect.h - 8, TKEYSIZE * 3, TKEYSIZE * 3 };
     renderKeyboardKey(renderer, 18, keyRect);
