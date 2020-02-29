@@ -14,6 +14,7 @@
 
 extern Lifetime lt;
 extern const int SCREEN_WIDTH;
+extern const int TKEYSIZE;
 extern renderLayer uiLayer;
 
 enum tool {

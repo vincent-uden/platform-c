@@ -473,15 +473,19 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     SDL_RenderCopy(renderer->renderer, es->cursorTexture, NULL, es->cursorRect);
     
     SDL_Rect lastRect = renderText(renderer, "MAP EDITOR", TRIGHT, (Vector) { SCREEN_WIDTH * 0.99, 0 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    SDL_Rect keyRect = (SDL_Rect) { lastRect.x - 6, lastRect.y + lastRect.h - 8, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 18, keyRect);
     if ( es->currTool == SELECT ) {
-        lastRect = renderText(renderer, "Select (S)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xaa, 0xFF, 0xaa });
+        lastRect = renderText(renderer, "Select", TLEFT, (Vector) { lastRect.x + TKEYSIZE * 3, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xaa, 0xFF, 0xaa });
     } else {
-        lastRect = renderText(renderer, "Select (S)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+        lastRect = renderText(renderer, "Select", TLEFT, (Vector) { lastRect.x + TKEYSIZE * 3, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     }
+    keyRect = (SDL_Rect) { lastRect.x - TKEYSIZE * 3 - 6, lastRect.y + lastRect.h - 8, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 17, keyRect);
     if ( es->currTool == RECT ) {
-        lastRect = renderText(renderer, "Rect (R)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xaa, 0xFF, 0xaa });
+        lastRect = renderText(renderer, "Rect", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xaa, 0xFF, 0xaa });
     } else {
-        lastRect = renderText(renderer, "Rect (R)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+        lastRect = renderText(renderer, "Rect", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     }
 
     lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
@@ -496,8 +500,12 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     //lastRect.x -= 5; lastRect.y -= 2; lastRect.w += 20;
     lastRect.y -= 2;
     lastRect.h += 6;
-    lastRect = renderTextSmall(renderer, "Save map (N)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 5 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
-    lastRect = renderTextSmall(renderer, "Load map (M)", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    lastRect = renderText(renderer, "Save map", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 5 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    keyRect = (SDL_Rect) { 160, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 12, keyRect);
+    lastRect = renderText(renderer, "Load map", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    keyRect = (SDL_Rect) { 160, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 13, keyRect);
 
     if ( es->currTool == SAVE_CONFIRM ) {
         renderConfirmPopup(renderer, "Save file?");

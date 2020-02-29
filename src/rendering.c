@@ -60,7 +60,6 @@ void renderBackground(worldRenderer* renderer, SDL_Texture* bgTexture, SDL_Rect 
     int txWidth = txtRect.w;
     int txHeight = txtRect.h;
     SDL_Rect txRect;
-    // TODO: Positions aren't quite right
     for ( int y = 0; y < SCREEN_HEIGHT + txHeight; y += txHeight ) {
         for ( int x = 0; x < SCREEN_WIDTH + txWidth; x += txWidth ) {
             txRect.x = (int) renderer->position.x % txWidth;
@@ -79,6 +78,16 @@ void renderBackground(worldRenderer* renderer, SDL_Texture* bgTexture, SDL_Rect 
             SDL_RenderCopy(renderer->renderer, bgTexture, NULL, &txRect);
         }
     }
+}
+
+void renderKeyboardKey(worldRenderer* renderer, int key, SDL_Rect dst) {
+    SDL_Rect src = (SDL_Rect) { 
+        (key % 8) * TKEYSIZE, 
+        (key / 8) * TKEYSIZE, 
+        TKEYSIZE, 
+        TKEYSIZE 
+    };
+    SDL_RenderCopy(renderer->renderer, keyboardTexture, &src, &dst);
 }
 
 SDL_Rect renderTextBackend(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font) {
