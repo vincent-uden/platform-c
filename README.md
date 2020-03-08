@@ -3,7 +3,7 @@
 This is a small 2D platforming prototype written in C99/ANSI-C based on SDL2. It
 includes a playable environment and a map editor in the same binary.
 
-![](https://gfycat.com/apprehensiveaffectionatefieldmouse)
+![](https://thumbs.gfycat.com/ApprehensiveAffectionateFieldmouse-size_restricted.gif)
 
 
 ## Building
