@@ -14,6 +14,7 @@
 
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
+const int TKEYSIZE = 16;
 
 enum game_mode {PLAYING, MAPEDIT, PAUSED};
 const int pauseMenuLen = 4;
@@ -27,6 +28,7 @@ TTF_Font* sansBold;
 TTF_Font* sansBoldSmall;
 TTF_Font* sansBoldBig;
 TTF_Font* sansBoldHuge;
+SDL_Texture* keyboardTexture;
 
 int main() {
     lt = createLt();
@@ -81,6 +83,8 @@ int main() {
     bgRect.y = 0;
     bgRect.w = 512;
     bgRect.h = 512;
+    keyboardTexture = IMG_LoadTexture(renderer, "./textures/keys.png");
+    PUSH_LT(lt, keyboardTexture, SDL_DestroyTexture);
     /* End of texture loading */
 
     /* Font Loading */
