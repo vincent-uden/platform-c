@@ -73,17 +73,20 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
         currRect = ws->rects[i];
         // The collision doesn't seem to be working
         Vector push = isColliding(worldToColliderRect(currRect), playerRect);
-        if ( fabs(push.x) < fabs(push.y) ) {
-            player->position.x += push.x;
-            player->speed.x = 0;
-        } else {
-            player->position.y += push.y;
-            if ( player->speed.y > 0 ) {
-                player->speed.y = 0;
-                player->jumpsLeft = 1;
-            }else {
-                player->speed.y = 0;
-                player->acc.y = 0;
+        if ( push.x != 0 || push.y != 0) {
+    VectorPrint(push);
+            if ( fabs(push.x) < fabs(push.y) ) {
+                player->position.x -= push.x;
+                player->speed.x = 0;
+            } else {
+                player->position.y -= push.y;
+                if ( player->speed.y > 0 ) {
+                    player->speed.y = 0;
+                    player->jumpsLeft = 1;
+                }else {
+                    player->speed.y = 0;
+                    player->acc.y = 0;
+                }
             }
         }
     }

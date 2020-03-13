@@ -42,5 +42,6 @@ ColliderRect worldToColliderRect(worldRect wr) {
     ColliderRect output;
     output.pos = wr.position;
     output.size = wr.size;
+    return output;
 }
 
