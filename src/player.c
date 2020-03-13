@@ -66,97 +66,24 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
     Vector botRight = VectorAdd(player->position, (Vector) { PLAYERSIZE, PLAYERSIZE });
 
     worldRect currRect;
+    ColliderRect playerRect;
+    playerRect.pos = player->position;
+    playerRect.size = (Vector) { PLAYERSIZE, PLAYERSIZE };
     for ( int i = 0; i < ws->rectAmount; i++ ) {
         currRect = ws->rects[i];
-        if ( topLeft.x    > currRect.position.x
-             && topLeft.x < currRect.position.x + currRect.size.x
-             && topLeft.y > currRect.position.y
-             && topLeft.y < currRect.position.y + currRect.size.y
-        ) {
-            float pushX = currRect.position.x + currRect.size.x - topLeft.x;
-            float pushY = currRect.position.y + currRect.size.y - topLeft.y;
-
-            if ( fabs(pushX) < fabs(pushY) ) {
-                player->position.x = currRect.position.x + currRect.size.x;
-                player->speed.x = 0;
-            } else {
-                player->position.y = currRect.position.y + currRect.size.y;
-                if ( player->speed.y > 0 ) {
-                    player->speed.y = 0;
-                    player->jumpsLeft = 1;
-                } else {
-                    player->speed.y = 0;
-                    player->acc.y = 0;
-                }
-            }
-        }
-
-        if ( topRight.x    > currRect.position.x
-             && topRight.x < currRect.position.x + currRect.size.x
-             && topRight.y > currRect.position.y
-             && topRight.y < currRect.position.y + currRect.size.y
-        ) {
-            float pushX =  currRect.position.x - topRight.x;
-            float pushY = currRect.position.y + currRect.size.y - topLeft.y;
-
-            if ( fabs(pushX) < fabs(pushY) ) {
-                player->position.x = currRect.position.x - PLAYERSIZE;
-                player->speed.x = 0;
-            } else {
-                player->position.y = currRect.position.y + currRect.size.y;
-                if ( player->speed.y > 0 ) {
-                    player->speed.y = 0;
-                    player->jumpsLeft = 1;
-                }else {
-                    player->speed.y = 0;
-                    player->acc.y = 0;
-                }
-            }
-        }
-
-        if ( botLeft.x    > currRect.position.x
-             && botLeft.x < currRect.position.x + currRect.size.x
-             && botLeft.y > currRect.position.y
-             && botLeft.y < currRect.position.y + currRect.size.y
-        ) {
-            float pushX = currRect.position.x + currRect.size.x - botLeft.x;
-            float pushY = currRect.position.y - botLeft.y;
-
-            if ( fabs(pushX) < fabs(pushY) ) {
-                player->position.x = currRect.position.x + currRect.size.x;
-                player->speed.x = 0;
-            } else {
-                player->position.y = currRect.position.y - PLAYERSIZE;
-                if ( player->speed.y > 0 ) {
-                    player->speed.y = 0;
-                    player->jumpsLeft = 1;
-                }else {
-                    player->speed.y = 0;
-                    player->acc.y = 0;
-                }
-            }
-        }
-
-        if ( botRight.x    > currRect.position.x
-             && topRight.x < currRect.position.x + currRect.size.x
-             && botRight.y > currRect.position.y
-             && botRight.y < currRect.position.y + currRect.size.y
-        ) {
-            float pushX =  currRect.position.x - botRight.x;
-            float pushY = currRect.position.y - botRight.y;
-
-            if ( fabs(pushX) < fabs(pushY) ) {
-                player->position.x = currRect.position.x - PLAYERSIZE;
-                player->speed.x = 0;
-            } else {
-                player->position.y = currRect.position.y - PLAYERSIZE;
-                if ( player->speed.y > 0 ) {
-                    player->speed.y = 0;
-                    player->jumpsLeft = 1;
-                }else {
-                    player->speed.y = 0;
-                    player->acc.y = 0;
-                }
+        // The collision doesn't seem to be working
+        Vector push = isColliding(worldToColliderRect(currRect), playerRect);
+        if ( fabs(push.x) < fabs(push.y) ) {
+            player->position.x += push.x;
+            player->speed.x = 0;
+        } else {
+            player->position.y += push.y;
+            if ( player->speed.y > 0 ) {
+                player->speed.y = 0;
+                player->jumpsLeft = 1;
+            }else {
+                player->speed.y = 0;
+                player->acc.y = 0;
             }
         }
     }

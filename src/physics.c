@@ -141,3 +141,23 @@ int
 VectorEq(Vector v1, Vector v2) {
     return v1.x == v2.x && v1.y == v2.y;
 }
+
+Vector isColliding(ColliderRect c1, ColliderRect c2) {
+    Vector push;
+    // Check x-overlap
+    if ( c1.pos.x < c2.pos.x && c1.pos.x + c1.size.x > c2.pos.x ) {
+        push.x = c1.pos.x - c2.pos.x + c1.size.x;
+    }
+    if ( c1.pos.x < c2.pos.x + c2.size.x && c1.pos.x + c1.size.x > c2.pos.x + c2.size.x ) {
+        push.x = c2.pos.x - c1.pos.x + c2.size.x;
+    }
+    // Check y-overlap 
+    if ( c1.pos.y < c2.pos.y && c1.pos.y + c1.size.y > c2.pos.y ) {
+        push.y = c1.pos.y - c2.pos.y + c1.size.y;
+    }
+    if ( c1.pos.y < c2.pos.y + c2.size.y && c1.pos.y + c1.size.y > c2.pos.y + c2.size.y ) {
+        push.y = c2.pos.y - c1.pos.y + c2.size.y;
+    }
+    return push;
+}
+

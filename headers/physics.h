@@ -17,6 +17,11 @@ typedef struct {
     double y;
 } Vector;
 
+typedef struct {
+    Vector pos;
+    Vector size;
+} ColliderRect;
+
 double VectorMag(Vector v);
 double VectorAngle(Vector v);
 double VectorScalar(Vector u, Vector v);
@@ -38,3 +43,4 @@ void VectorPrint(Vector v);
 
 int VectorEq(Vector v1, Vector v2);
 
+Vector isColliding(ColliderRect c1, ColliderRect c2);
