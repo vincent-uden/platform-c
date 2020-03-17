@@ -16,7 +16,7 @@ const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 const int TKEYSIZE = 16;
 
-enum game_mode {PLAYING, MAPEDIT, PAUSED};
+enum game_mode {PLAYING, MAPEDIT, PAUSED, FRAMESTEP};
 const int pauseMenuLen = 4;
 const char* menuTexts[] = {"Resume", "Controls", "Settings", "Exit"};
 
@@ -142,6 +142,7 @@ int main() {
 
     running = 1;
     int pauseReturn;
+    int frameStep = 0;
 
     while ( running ) {
         while ( SDL_PollEvent(&e) != 0 ) {
@@ -167,6 +168,17 @@ int main() {
                 }
                 if ( e.key.keysym.sym < 322  && e.key.keysym.sym >= 0 )
                     KEYS[e.key.keysym.sym] = 1;
+                if ( e.key.keysym.sym == SDLK_p ) {
+                    if ( gm == PLAYING ) {
+                        gm = FRAMESTEP;
+                        frameStep = 0;
+                    } else if ( gm == FRAMESTEP ) {
+                        gm = PLAYING;
+                    }
+                }
+                if ( e.key.keysym.sym == SDLK_n ) {
+                    frameStep = 1;
+                }
                 break;
             case SDL_KEYUP:
                 if ( e.key.keysym.sym < 322  && e.key.keysym.sym >= 0 )
@@ -199,6 +211,17 @@ int main() {
                 playerUpdate(&player, deltaTime / 10, &gameState);
             }
             wrldRenderer.position = VectorSub(player.position, (Vector) { SCREEN_WIDTH / 2 - PLAYERSIZE / 2, SCREEN_HEIGHT / 2 - PLAYERSIZE / 2});
+            break;
+        case FRAMESTEP:
+            if ( frameStep ) {
+                worldUpdate(&gameState);
+                playerHandleInput(&player, KEYS);
+                for ( int i = 0; i < 10; i++ ) {
+                    playerUpdate(&player, deltaTime / 10, &gameState);
+                }
+                wrldRenderer.position = VectorSub(player.position, (Vector) { SCREEN_WIDTH / 2 - PLAYERSIZE / 2, SCREEN_HEIGHT / 2 - PLAYERSIZE / 2});
+                frameStep = 0;
+            }
             break;
         case MAPEDIT:
             for ( int i = 0; i < 5; i++ ) {
@@ -238,6 +261,11 @@ int main() {
             renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
             worldDraw(wRenderer, &gameState);
             break;
+        case FRAMESTEP:
+            renderRect(wRenderer, RECT_SHADOW, VectorAdd(player.position, (Vector) { 5, 10 }), (Vector) { PLAYERSIZE, PLAYERSIZE });
+            renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
+            worldDraw(wRenderer, &gameState);
+            break;
         case MAPEDIT:
             renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
             mapEditDraw(wRenderer, &editorState);
@@ -253,9 +281,9 @@ int main() {
         SDL_RenderPresent(renderer);
         frames++;
 
-        if ( frames % 100 == 0 )
-            printLt(lt);
-        printf("%f\n", deltaTime);
+        //if ( frames % 100 == 0 )
+            //printLt(lt);
+        //printf("%f\n", deltaTime);
     }
 
     exit(0);

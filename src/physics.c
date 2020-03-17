@@ -143,6 +143,7 @@ VectorEq(Vector v1, Vector v2) {
 }
 
 Vector isColliding(ColliderRect c1, ColliderRect c2) {
+    // Only works downwards and to the right
     Vector push;
     push.x = 0;
     push.y = 0;
@@ -153,6 +154,7 @@ Vector isColliding(ColliderRect c1, ColliderRect c2) {
     if ( c1.pos.x < c2.pos.x + c2.size.x && c1.pos.x + c1.size.x > c2.pos.x + c2.size.x ) {
         push.x = c2.pos.x - c1.pos.x + c2.size.x;
     }
+
     // Check y-overlap 
     if ( c1.pos.y < c2.pos.y && c1.pos.y + c1.size.y > c2.pos.y ) {
         push.y = c1.pos.y - c2.pos.y + c1.size.y;
@@ -164,6 +166,11 @@ Vector isColliding(ColliderRect c1, ColliderRect c2) {
     if ( push.x == 0 || push.y == 0 ) {
         push.x = 0;
         push.y = 0;
+    } else {
+        if ( push.y < 0 ) {
+        puts("Push:");
+        VectorPrint(push);
+        }
     }
     return push;
 }
