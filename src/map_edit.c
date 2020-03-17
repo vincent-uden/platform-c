@@ -504,10 +504,10 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     lastRect.h += 6;
     lastRect = renderText(renderer, "Save map", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 5 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     keyRect = (SDL_Rect) { 160, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
-    renderKeyboardKey(renderer, 12, keyRect);
+    renderKeyboardKey(renderer, 13, keyRect);
     lastRect = renderText(renderer, "Load map", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     keyRect = (SDL_Rect) { 160, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
-    renderKeyboardKey(renderer, 13, keyRect);
+    renderKeyboardKey(renderer, 12, keyRect);
 
     if ( es->currTool == SAVE_CONFIRM ) {
         renderConfirmPopup(renderer, "Save file?");

@@ -37,3 +37,11 @@ void worldDraw(worldRenderer* renderer, worldState* ws) {
         renderRect(renderer, RECT_COLOR, ws->rects[i].position, ws->rects[i].size);
     }
 }
+
+ColliderRect worldToColliderRect(worldRect wr) {
+    ColliderRect output;
+    output.pos = wr.position;
+    output.size = wr.size;
+    return output;
+}
+

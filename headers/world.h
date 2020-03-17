@@ -19,3 +19,5 @@ typedef struct {
 void worldSetRects(worldState* ws, mapEditorState* es);
 void worldUpdate(worldState* ws);
 void worldDraw(worldRenderer* renderer, worldState* ws);
+
+ColliderRect worldToColliderRect(worldRect wr);
