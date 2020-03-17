@@ -162,8 +162,16 @@ int main() {
                 if ( e.key.keysym.sym == SDLK_ESCAPE ) {
                     if ( gm == PLAYING ) {
                         gm = PAUSED;
-                    } else {
+                    } else if ( gm == PAUSED ) {
                         gm = PLAYING;
+                    } else if ( gm == MAPEDIT ) {
+                        if ( editorState.currTool != SAVE_DONE &&
+                             editorState.currTool != SAVE_CONFIRM &&
+                             editorState.currTool != LOAD_DONE &&
+                             editorState.currTool != LOAD_CONFIRM
+                        ) {
+                            gm = PLAYING;
+                        }
                     }
                 }
                 if ( e.key.keysym.sym < 322  && e.key.keysym.sym >= 0 )
