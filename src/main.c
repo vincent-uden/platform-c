@@ -272,6 +272,7 @@ int main() {
         case FRAMESTEP:
             renderRect(wRenderer, RECT_SHADOW, VectorAdd(player.position, (Vector) { 5, 10 }), (Vector) { PLAYERSIZE, PLAYERSIZE });
             renderRect(wRenderer, 0xFF404dFF, player.position, (Vector) { PLAYERSIZE, PLAYERSIZE });
+            renderTextSmall(wRenderer, "Frame-by-frame mode (P-Close mode, N-Next frame)", TRIGHT, VectorAdd(wRenderer->position, (Vector) { SCREEN_WIDTH * 0.99, 0 }), (SDL_Color) { 0xFF, 0x33, 0x33 });
             worldDraw(wRenderer, &gameState);
             break;
         case MAPEDIT:
