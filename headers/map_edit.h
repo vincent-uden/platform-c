@@ -57,6 +57,7 @@ typedef struct {
     rectList rl;
     int cursorState;
     int gridSize;
+    int tmpGridSize;
     enum tool currTool;
     enum tool prevTool;
 

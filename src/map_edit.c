@@ -240,6 +240,23 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
         }
         return;
     }
+    if ( KEYS[SDLK_j] ) {
+        /* J - Grid Size- */
+        if ( es->gridSize > 2 ) {
+            es->gridSize--;
+            es->tmpGridSize = es->gridSize;
+        }
+    }
+    if ( KEYS[SDLK_k] ) {
+        /* K - Grid Size+ */
+        if ( es->gridSize > 1 ) {
+            es->gridSize++;
+            es->tmpGridSize = es->gridSize;
+        }
+    }
+    if ( KEYS[SDLK_g] ) {
+        /* G - Grid Toggle */
+    }
     if ( KEYS[115] ) {
         /* S - select */
         es->currTool = SELECT;
@@ -488,8 +505,6 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
         SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
         SDL_RenderDrawLine(renderer->renderer, x, 0, x, SCREEN_HEIGHT);
     }
-
-
     /* ----------- */
     
     renderRect(renderer, 0x82000000, (Vector) { SCREEN_WIDTH - 200, 0 }, (Vector) { 200, 150 });
