@@ -7,7 +7,7 @@ Player makePlayer(Vector pos) {
         (Vector) { 0, 0 },
         1000,
         12000,
-        20,
+        100,
         0,
         0
     };
@@ -20,7 +20,7 @@ void playerHandleInput(Player* player, int* KEYS) {
     }
     if ( KEYS[SDLK_a] ) {
         player->acc.x -= 100000;
-   }
+    }
     if ( KEYS[SDLK_SPACE] ) {
         player->holdingJump = 1;
         if ( player->jumpsLeft > 0 ) {
@@ -33,8 +33,14 @@ void playerHandleInput(Player* player, int* KEYS) {
 }
 
 void playerUpdate(Player* player, double deltaTime, worldState* ws) {
-    double airResMag = player->air_k * (player->speed.x * player->speed.x);
+    double airResMag;
+    if ( player->acc.x ) {
+        airResMag = player->air_k * (player->speed.x * player->speed.x);
+    } else {
+        airResMag = 3 * player->air_k * (player->speed.x * player->speed.x);
+    }
     double airResDir = 1;
+    Vector oldAcc = player->acc;
     if ( player->speed.x < 0 ) {
         airResDir = -1;
     }
@@ -56,6 +62,7 @@ void playerUpdate(Player* player, double deltaTime, worldState* ws) {
     if ( fabs(player->speed.y) < 40 ) {
         // player->speed.y = 0;
     }
+    player->acc = oldAcc;
 
     VectorAddIp(&(player->position), VectorMul(player->speed, deltaTime));
 
