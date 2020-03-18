@@ -529,6 +529,20 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     keyRect = (SDL_Rect) { 160, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
     renderKeyboardKey(renderer, 12, keyRect);
 
+    /* Grid Controls */
+    renderRect(renderer, 0x82000000, (Vector) { 0, SCREEN_HEIGHT - 140 }, (Vector) { 250, 200 });
+    lastRect = renderText(renderer, "Toggle Grid", TLEFT, (Vector) { 66, SCREEN_HEIGHT - 130 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    keyRect = (SDL_Rect) { 6, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 6, keyRect);
+    lastRect = renderText(renderer, "Grid Size +", TLEFT, (Vector) { 66, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    keyRect = (SDL_Rect) { 6, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 9, keyRect);
+    lastRect = renderText(renderer, "Grid Size -", TLEFT, (Vector) { 66, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    keyRect = (SDL_Rect) { 6, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 10, keyRect);
+    /* ------------- */
+
+    /* Popups */
     if ( es->currTool == SAVE_CONFIRM ) {
         renderConfirmPopup(renderer, "Save file?");
     }
@@ -541,6 +555,7 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     if ( es->currTool == LOAD_DONE ) {
         renderPopup(renderer, "File loaded!");
     }
+    /* ----- */
 
     SDL_SetRenderTarget(renderer->renderer, NULL);
     SDL_RenderCopy(renderer->renderer, uiLayer.tx, NULL, NULL);
