@@ -15,6 +15,7 @@
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 const int TKEYSIZE = 16;
+const int FPSARRSIZE = 60;
 
 enum game_mode {PLAYING, MAPEDIT, PAUSED, FRAMESTEP};
 const int pauseMenuLen = 4;
@@ -98,7 +99,7 @@ int main() {
     Player player = makePlayer((Vector) { 100, 100 });
 
     int running = 1;
-    int frames = 0;
+    int frames = FPSARRSIZE;
     SDL_Event e; 
     
     int KEYS[322];
@@ -117,6 +118,11 @@ int main() {
     Uint64 NOW = SDL_GetPerformanceCounter();
     Uint64 LAST = 0;
     double deltaTime = 0;
+    double timeHistory[FPSARRSIZE];
+    for ( int i = 0; i < FPSARRSIZE; i++ ) {
+        timeHistory[i] = 0.01;
+    }
+    char fpsText[10];
 
     enum game_mode gm = PLAYING;
 
@@ -206,9 +212,22 @@ int main() {
         LAST = NOW;
         NOW = SDL_GetPerformanceCounter();
         deltaTime = (double) ((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
-        if ( deltaTime > 0.1 ) {
+        /* The zero check is only to prevent zero-division errors from timeHistory */
+        if ( deltaTime > 0.1 || deltaTime == 0) {
             deltaTime = 0.1;
         }
+        if ( frames % 10 == 0) {
+            if ( frames >= FPSARRSIZE ) {
+                frames = 0;
+            }
+            double total = 0;
+            for ( int i = 0; i < FPSARRSIZE; i++ ) {
+                total += timeHistory[i];
+            }
+            total /= FPSARRSIZE;
+            sprintf(fpsText, "%i", (int) (1.0 / total));
+        }
+        timeHistory[frames] = deltaTime;
 
         /* Updating */
         switch (gm) {
@@ -287,12 +306,10 @@ int main() {
             break;
         }
 
+        renderTextSmall(wRenderer, fpsText, TLEFT, VectorAdd(wRenderer->position, (Vector) { 0, SCREEN_HEIGHT - 25 }), (SDL_Color) { 0x00, 0xFF, 0x00 });
+
         SDL_RenderPresent(renderer);
         frames++;
-
-        //if ( frames % 100 == 0 )
-            //printLt(lt);
-        //printf("%f\n", deltaTime);
     }
 
     exit(0);
