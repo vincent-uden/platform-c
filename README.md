@@ -12,5 +12,11 @@ The included Makefile should cover everything. "make" to compile and "make run" 
 - Left/Right = A/D
 - Jump = Space
 - Open/Close Map Editor = F
+  - Rectangle tool = R
+  - Select tool = S
+  - Save map = N
+  - Load map = M
+- Toggle frame-by-frame mode = P
+  - Advance one frame = N
 
 There are additional controls shown in the map editor through the interface.
