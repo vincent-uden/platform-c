@@ -18,7 +18,7 @@ int pauseMenuHandleInput(int* KEYS, pauseMenuState* ps) {
         KEYS[SDLK_j] = 0;
     }
 
-    if ( KEYS[13] ) {
+    if ( KEYS[13] || KEYS[SDLK_e] ) {
         switch (ps->selectedIndex) {
         case 0:
             /* Resume the game */
