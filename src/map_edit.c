@@ -303,22 +303,23 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
     case RECT:
         break;
     case SAVE_CONFIRM:
-        if ( KEYS[13] ) {
+        if ( KEYS[13] || KEYS[SDLK_e] ) {
             saveMapFile(es->mf);
             es->currTool = SAVE_DONE;
             KEYS[13] = 0;
+            KEYS[SDLK_e] = 0;
         }
         if ( KEYS[27] ) {
             es->currTool = SELECT;
         }
         break;
     case SAVE_DONE:
-        if ( KEYS[13] || KEYS[27] ) {
+        if ( KEYS[13] || KEYS[27] || KEYS[SDLK_e] ) {
             es->currTool = SELECT;
         }
         break;
     case LOAD_CONFIRM:
-        if ( KEYS[13] ) {
+        if ( KEYS[13] || KEYS[SDLK_e] ) {
             mapFile newMap = loadMapFile(es->mf->path);
             freeMapFile(es->mf);
             es->mf->path = newMap.path;
@@ -326,13 +327,14 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
             es->rl = newMap.rl;
             es->currTool = LOAD_DONE;
             KEYS[13] = 0;
+            KEYS[SDLK_e] = 0;
         }
         if ( KEYS[27] ) {
             es->currTool = SELECT;
         }
         break;
     case LOAD_DONE:
-        if ( KEYS[13] || KEYS[27] ) {
+        if ( KEYS[13] || KEYS[27] || KEYS[SDLK_e] ) {
             es->currTool = SELECT;
         }
         break;
