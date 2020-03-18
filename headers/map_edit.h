@@ -56,6 +56,7 @@ typedef struct {
     Vector panStartCamera;
     rectList rl;
     int cursorState;
+    int gridSize;
     enum tool currTool;
     enum tool prevTool;
 
@@ -66,6 +67,7 @@ typedef struct {
     SDL_Rect pathRect;
 } mapEditorState;
 
+/* Linked list stuff */
 void popRectNode(rectList list, int index);
 void freeAllRectNodes(rectList list);
 void printRectList(rectList list);
@@ -74,9 +76,10 @@ rectNode* addRectNode(rectList list);
 
 int rectListLength(rectList list);
 
-
 editorRect* getListRect(rectList list, int index);
+/* ----------------- */
 
+/* Map editor stuff */
 int isMouseInRect(editorRect r);
 int isMouseInSDL_Rect(SDL_Rect r);
 
@@ -91,3 +94,4 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
 void mapHandleMouseRelease(int button, mapEditorState* es, worldRenderer* renderer);
 void mapEditUpdate(mapEditorState* es, worldRenderer* renderer);
 void mapEditDraw(worldRenderer* renderer, mapEditorState* es);
+/* ----------------- */

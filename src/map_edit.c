@@ -473,9 +473,22 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     SDL_SetRenderDrawColor(renderer->renderer, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(renderer->renderer);
     SDL_RenderCopy(renderer->renderer, es->cursorTexture, NULL, es->cursorRect);
+
+    /* Render Grid */
+    for ( int y = -((int) wrldPos.y % es->gridSize); y < SCREEN_HEIGHT; y += es->gridSize ) {
+        SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+        SDL_RenderDrawLine(renderer->renderer, 0, y, SCREEN_WIDTH, y);
+    }
+    for ( int x = -((int) wrldPos.x % es->gridSize); x < SCREEN_WIDTH; x += es->gridSize ) {
+        SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+        SDL_RenderDrawLine(renderer->renderer, x, 0, x, SCREEN_HEIGHT);
+    }
+
+
+    /* ----------- */
     
-    renderRect(renderer, 0x32000000, (Vector) { SCREEN_WIDTH - 200, 0 }, (Vector) { 200, 150 });
-    renderRect(renderer, 0x32000000, (Vector) { 0, 0 }, (Vector) { 230, 150 });
+    renderRect(renderer, 0x82000000, (Vector) { SCREEN_WIDTH - 200, 0 }, (Vector) { 200, 150 });
+    renderRect(renderer, 0x82000000, (Vector) { 0, 0 }, (Vector) { 230, 150 });
     SDL_Rect lastRect = renderText(renderer, "MAP EDITOR", TRIGHT, (Vector) { SCREEN_WIDTH * 0.99, 0 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     SDL_Rect keyRect = (SDL_Rect) { lastRect.x - 6, lastRect.y + lastRect.h - 8, TKEYSIZE * 3, TKEYSIZE * 3 };
     renderKeyboardKey(renderer, 18, keyRect);
@@ -495,9 +508,9 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     lastRect.x -= 5; lastRect.y -= 2; lastRect.w += 20; lastRect.h += 6;
     if ( es->currTool == TYPING_PATH ) {
-        renderRect(renderer, 0x55000000, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
+        renderRect(renderer, 0xFF615151, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
     } else {
-        renderRect(renderer, 0x33000000, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
+        renderRect(renderer, 0xFF413131, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
     }
     es->pathRect = lastRect;
     lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });

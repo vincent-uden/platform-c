@@ -132,6 +132,7 @@ int main() {
     editorState.rl = NULL;
     editorState.cursorTexture = cursorTexture; editorState.cursorRect = &cursorRect;
     editorState.cursorState = 0;
+    editorState.gridSize = 100;
     editorState.currTool = SELECT;
     editorState.mf = NULL;
 
