@@ -241,6 +241,7 @@ int main() {
             break;
         case FRAMESTEP:
             if ( frameStep ) {
+        puts("############################");
                 worldUpdate(&gameState);
                 playerHandleInput(&player, KEYS);
                 for ( int i = 0; i < 10; i++ ) {
