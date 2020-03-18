@@ -381,8 +381,8 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
                 es->cursorState = 1;
                 int mouseX, mouseY;
                 SDL_GetMouseState(&mouseX, &mouseY);
-                es->prevMousePos.x = mouseX + renderer->position.x;
-                es->prevMousePos.y = mouseY + renderer->position.y;
+                es->prevMousePos.x = roundf((mouseX + renderer->position.x) / es->gridSize) * es->gridSize;
+                es->prevMousePos.y = roundf((mouseY + renderer->position.y) / es->gridSize) * es->gridSize;
             } else if ( es->cursorState == 1 ) {
                 es->cursorState = 0;
                 rectNode* newNode;
@@ -398,7 +398,9 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
                     newNode = addRectNode(es->rl);
                 }
                 Vector newPos = es->prevMousePos;
-                Vector newSize = VectorSub(VectorAdd(es->mousePos, renderer->position), es->prevMousePos);
+                Vector newSize;
+                newSize.x = roundf((es->mousePos.x + renderer->position.x - es->prevMousePos.x) / es->gridSize) * es->gridSize;
+                newSize.y = roundf((es->mousePos.y + renderer->position.y - es->prevMousePos.y) / es->gridSize) * es->gridSize;
                 if ( newSize.x < 0 ) {
                     newSize.x *= -1;
                     newPos.x -= newSize.x;
@@ -454,7 +456,10 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     es->cursorRect->x = es->mousePos.x;
     es->cursorRect->y = es->mousePos.y;
     if ( es->cursorState == 1 ) {
-        renderRect(renderer, 0x66FFE49E, es->prevMousePos, VectorSub(VectorAdd(es->mousePos, renderer->position), es->prevMousePos));
+        Vector rectSize;
+        rectSize.x = roundf((es->mousePos.x + renderer->position.x - es->prevMousePos.x) / es->gridSize) * es->gridSize;
+        rectSize.y = roundf((es->mousePos.y + renderer->position.y - es->prevMousePos.y) / es->gridSize) * es->gridSize;
+        renderRect(renderer, 0x66FFE49E, es->prevMousePos, rectSize);
     }
     rectNode* currNode = es->rl;
     while ( currNode != NULL ) {
