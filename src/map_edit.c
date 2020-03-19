@@ -13,6 +13,7 @@ void popRectNode(rectList list, int index) {
     POP_LT_PTR(lt, toBeRemoved);
 }
 
+/* Deallocates the memory for all nodes in the stack */
 void freeAllRectNodes(rectList list) {
     int length = rectListLength(list);
     rectNode** ptrs = malloc(length * sizeof(rectNode*));
@@ -27,6 +28,7 @@ void freeAllRectNodes(rectList list) {
     POP_LT_PTR(lt, ptrs);
 }
 
+/* Pretty-prints the linked list */
 void printRectList(rectList list) {
     rectNode* curr = list;
     int i = 0;
@@ -57,6 +59,7 @@ rectNode* addRectNode(rectList list) {
     return newNode;
 }
 
+/* Returns the amount of nodes in the linked list */
 int rectListLength(rectList list) {
     printf("%p\n", list);
     rectNode* curr = list;
@@ -68,6 +71,7 @@ int rectListLength(rectList list) {
     return i;
 }
 
+/* Indexing function to reduce the amount of for loops in the code */
 editorRect* getListRect(rectList list, int index) {
     rectNode* curr = list;
     for ( int i = 0; i < index; i++ ) {
@@ -76,6 +80,7 @@ editorRect* getListRect(rectList list, int index) {
     return &(curr->value);
 }
 
+/* Used in UI to check when the mouse hovers over a clickable box */
 int isMouseInRect(editorRect r) {
     int mouseX, mouseY;
     SDL_GetMouseState(&mouseX, &mouseY);
@@ -83,6 +88,7 @@ int isMouseInRect(editorRect r) {
         (mouseY >= r.position.y && mouseY <= r.position.y + r.size.y);
 }
 
+/* Same behaviour as isMouseInRect but "overloaded" for SDL_Rect */
 int isMouseInSDL_Rect(SDL_Rect r) {
     int mouseX, mouseY;
     SDL_GetMouseState(&mouseX, &mouseY);
@@ -90,7 +96,8 @@ int isMouseInSDL_Rect(SDL_Rect r) {
         (mouseY >= r.y && mouseY <= r.y + r.h);
 }
 
-/* Will make it's own copy of fp. The copy is freed with freeMapFile but not the original fp */
+/* Will make it's own copy of fp (the file path). The copy is freed with freeMapFile 
+ * but not the original fp */
 mapFile loadMapFile(char* fp) {
     mapFile output;
     int fpLen = strlen(fp) + 1;
@@ -165,11 +172,15 @@ mapFile loadMapFile(char* fp) {
     return output;
 }
 
+/* Deallocator for mapFile. Deallocates the mapFile struct and all of it's related 
+ * memory allocations such as it's linked list.
+ */
 void freeMapFile(mapFile* mf) {
     POP_LT_PTR(lt, mf->path);
     freeAllRectNodes(mf->rl);
 }
 
+/* Saves a given mapFile to it's associated path on the disk */
 void saveMapFile(mapFile* mf) {
     FILE* f = fopen(mf->path, "w");
     PUSH_LT(lt, f, fclose);
@@ -186,6 +197,7 @@ void saveMapFile(mapFile* mf) {
     POP_LT_PTR(lt, f);
 }
 
+/* Used when typing text into the file path box, appends a letter to the string */
 void mapAddPathChar(int i, mapEditorState* es) {
     int len = strlen(es->mf->path) + 2;
     char* new = malloc(len * sizeof(char));
@@ -197,6 +209,9 @@ void mapAddPathChar(int i, mapEditorState* es) {
     es->mf->path = new;
 }
 
+/* Reads the state of relevant keyboard keys and performs the appropriate 
+ * procedures to handle them.
+ */
 void mapHandleInput(int* KEYS, mapEditorState* es) {
     // TODO: Something happens when deleting after exiting and reentering the editor
     if ( es->currTool == TYPING_PATH ) {
@@ -370,6 +385,7 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
     }
 }
 
+/* Updates the mapEditorState according to what mouse button has been pressed */
 void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer) {
     if ( button == 2 ) {
         /* View panning */
@@ -458,6 +474,7 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
     }
 }
 
+/* Updates the mapEditorState according to what mouse button has been released */
 void mapHandleMouseRelease(int button, mapEditorState* es, worldRenderer* renderer) {
     if ( button == 2 ) {
         /* View panning */
@@ -465,6 +482,7 @@ void mapHandleMouseRelease(int button, mapEditorState* es, worldRenderer* render
     }
 }
 
+/* Updates the mapEditorState, should be called each frame the editor is open */
 void mapEditUpdate(mapEditorState* es, worldRenderer* renderer) {
     int mouseX, mouseY;
     SDL_GetMouseState(&mouseX, &mouseY);
@@ -481,6 +499,10 @@ void mapEditUpdate(mapEditorState* es, worldRenderer* renderer) {
     sprintf(es->gridSizeText, "Grid size: %i", es->tmpGridSize);
 }
 
+/* Draws the entire screen while the map editor is open. The world and UI are
+ * drawn on separate rendering layers which are combined at the end of the 
+ * function before being drawn to the internal screen buffer.
+ */
 void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     /* Render Things in World */
     es->cursorRect->x = es->mousePos.x;
@@ -500,6 +522,7 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
         }
         currNode = currNode->next;
     }
+    /* ---------------------- */
 
     /* Render UI */
     Vector wrldPos = renderer->position;
@@ -522,6 +545,7 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     }
     /* ----------- */
     
+    /* Render top right corner */
     renderRect(renderer, 0x82000000, (Vector) { SCREEN_WIDTH - 200, 0 }, (Vector) { 200, 150 });
     renderRect(renderer, 0x82000000, (Vector) { 0, 0 }, (Vector) { 230, 150 });
     SDL_Rect lastRect = renderText(renderer, "MAP EDITOR", TRIGHT, (Vector) { SCREEN_WIDTH * 0.99, 0 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
@@ -539,7 +563,9 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     } else {
         lastRect = renderText(renderer, "Rect", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h + 1 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     }
+    /* ----------------------- */
 
+    /* Render top left corner */
     lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     lastRect.x -= 5; lastRect.y -= 2; lastRect.w += 20; lastRect.h += 6;
     if ( es->currTool == TYPING_PATH ) {
@@ -558,6 +584,7 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     lastRect = renderText(renderer, "Load map", TLEFT, (Vector) { lastRect.x, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     keyRect = (SDL_Rect) { 160, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
     renderKeyboardKey(renderer, 12, keyRect);
+    /* ---------------------- */
 
     /* Grid Controls */
     renderRect(renderer, 0x82000000, (Vector) { 0, SCREEN_HEIGHT - 180 }, (Vector) { 250, 200 });
