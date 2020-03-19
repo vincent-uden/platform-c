@@ -245,6 +245,9 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
         if ( es->gridSize > 2 ) {
             es->gridSize--;
             es->tmpGridSize = es->gridSize;
+            if ( CTRL_STATE ) {
+                KEYS[SDLK_j] = 0;
+            }
         }
     }
     if ( KEYS[SDLK_k] ) {
@@ -252,10 +255,19 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
         if ( es->gridSize > 1 ) {
             es->gridSize++;
             es->tmpGridSize = es->gridSize;
+            if ( CTRL_STATE ) {
+                KEYS[SDLK_k] = 0;
+            }
         }
     }
     if ( KEYS[SDLK_g] ) {
         /* G - Grid Toggle */
+        if ( es->gridSize == 1 ) {
+            es->gridSize = es->tmpGridSize;
+        } else {
+            es->gridSize = 1;
+        }
+        KEYS[SDLK_g] = 0;
     }
     if ( KEYS[115] ) {
         /* S - select */
@@ -497,13 +509,16 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     SDL_RenderCopy(renderer->renderer, es->cursorTexture, NULL, es->cursorRect);
 
     /* Render Grid */
-    for ( int y = -((int) wrldPos.y % es->gridSize); y < SCREEN_HEIGHT; y += es->gridSize ) {
-        SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-        SDL_RenderDrawLine(renderer->renderer, 0, y, SCREEN_WIDTH, y);
-    }
-    for ( int x = -((int) wrldPos.x % es->gridSize); x < SCREEN_WIDTH; x += es->gridSize ) {
-        SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-        SDL_RenderDrawLine(renderer->renderer, x, 0, x, SCREEN_HEIGHT);
+    if ( es->gridSize != 1 ) {
+        printf("wrldPos.y %f, gridSize %i\n", wrldPos.y, es->gridSize);
+        for ( int y = -((int) wrldPos.y % es->gridSize); y < SCREEN_HEIGHT; y += es->gridSize ) {
+            SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+            SDL_RenderDrawLine(renderer->renderer, 0, y, SCREEN_WIDTH, y);
+        }
+        for ( int x = -((int) wrldPos.x % es->gridSize); x < SCREEN_WIDTH; x += es->gridSize ) {
+            SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+            SDL_RenderDrawLine(renderer->renderer, x, 0, x, SCREEN_HEIGHT);
+        }
     }
     /* ----------- */
     
