@@ -17,6 +17,8 @@ const int SCREEN_HEIGHT = 768;
 const int TKEYSIZE = 16;
 const int FPSARRSIZE = 60;
 
+int CTRL_STATE = 0;
+
 enum game_mode {PLAYING, MAPEDIT, PAUSED, FRAMESTEP};
 const int pauseMenuLen = 4;
 const char* menuTexts[] = {"Resume", "Controls", "Settings", "Exit"};
@@ -132,8 +134,12 @@ int main() {
     editorState.rl = NULL;
     editorState.cursorTexture = cursorTexture; editorState.cursorRect = &cursorRect;
     editorState.cursorState = 0;
+    editorState.gridSize = 64;
+    editorState.tmpGridSize = editorState.gridSize;
     editorState.currTool = SELECT;
     editorState.mf = NULL;
+    editorState.gridSizeText = malloc(sizeof(char) * 20);
+    PUSH_LT(lt, editorState.gridSizeText, free);
 
     worldState gameState;
     gameState.rects = NULL;
@@ -193,10 +199,17 @@ int main() {
                 if ( e.key.keysym.sym == SDLK_n ) {
                     frameStep = 1;
                 }
+                if ( e.key.keysym.sym == SDLK_LCTRL ) {
+                    CTRL_STATE = 1;
+                }
                 break;
             case SDL_KEYUP:
-                if ( e.key.keysym.sym < 322  && e.key.keysym.sym >= 0 )
+                if ( e.key.keysym.sym < 322  && e.key.keysym.sym >= 0 ) {
                     KEYS[e.key.keysym.sym] = 0;
+                }
+                if ( e.key.keysym.sym == SDLK_LCTRL ) {
+                    CTRL_STATE = 0;
+                }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 MBUTTONS[e.button.button - 1] = 1;

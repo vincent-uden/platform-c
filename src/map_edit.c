@@ -240,6 +240,35 @@ void mapHandleInput(int* KEYS, mapEditorState* es) {
         }
         return;
     }
+    if ( KEYS[SDLK_j] ) {
+        /* J - Grid Size- */
+        if ( es->gridSize > 2 ) {
+            es->gridSize--;
+            es->tmpGridSize = es->gridSize;
+            if ( CTRL_STATE ) {
+                KEYS[SDLK_j] = 0;
+            }
+        }
+    }
+    if ( KEYS[SDLK_k] ) {
+        /* K - Grid Size+ */
+        if ( es->gridSize > 1 ) {
+            es->gridSize++;
+            es->tmpGridSize = es->gridSize;
+            if ( CTRL_STATE ) {
+                KEYS[SDLK_k] = 0;
+            }
+        }
+    }
+    if ( KEYS[SDLK_g] ) {
+        /* G - Grid Toggle */
+        if ( es->gridSize == 1 ) {
+            es->gridSize = es->tmpGridSize;
+        } else {
+            es->gridSize = 1;
+        }
+        KEYS[SDLK_g] = 0;
+    }
     if ( KEYS[115] ) {
         /* S - select */
         es->currTool = SELECT;
@@ -381,8 +410,8 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
                 es->cursorState = 1;
                 int mouseX, mouseY;
                 SDL_GetMouseState(&mouseX, &mouseY);
-                es->prevMousePos.x = mouseX + renderer->position.x;
-                es->prevMousePos.y = mouseY + renderer->position.y;
+                es->prevMousePos.x = roundf((mouseX + renderer->position.x) / es->gridSize) * es->gridSize;
+                es->prevMousePos.y = roundf((mouseY + renderer->position.y) / es->gridSize) * es->gridSize;
             } else if ( es->cursorState == 1 ) {
                 es->cursorState = 0;
                 rectNode* newNode;
@@ -398,7 +427,9 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
                     newNode = addRectNode(es->rl);
                 }
                 Vector newPos = es->prevMousePos;
-                Vector newSize = VectorSub(VectorAdd(es->mousePos, renderer->position), es->prevMousePos);
+                Vector newSize;
+                newSize.x = roundf((es->mousePos.x + renderer->position.x - es->prevMousePos.x) / es->gridSize) * es->gridSize;
+                newSize.y = roundf((es->mousePos.y + renderer->position.y - es->prevMousePos.y) / es->gridSize) * es->gridSize;
                 if ( newSize.x < 0 ) {
                     newSize.x *= -1;
                     newPos.x -= newSize.x;
@@ -447,6 +478,7 @@ void mapEditUpdate(mapEditorState* es, worldRenderer* renderer) {
         VectorAddIp(&(renderer->position), es->panStartPos);
         VectorSubIp(&(renderer->position), mDelta);
     }
+    sprintf(es->gridSizeText, "Grid size: %i", es->tmpGridSize);
 }
 
 void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
@@ -454,7 +486,10 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     es->cursorRect->x = es->mousePos.x;
     es->cursorRect->y = es->mousePos.y;
     if ( es->cursorState == 1 ) {
-        renderRect(renderer, 0x66FFE49E, es->prevMousePos, VectorSub(VectorAdd(es->mousePos, renderer->position), es->prevMousePos));
+        Vector rectSize;
+        rectSize.x = roundf((es->mousePos.x + renderer->position.x - es->prevMousePos.x) / es->gridSize) * es->gridSize;
+        rectSize.y = roundf((es->mousePos.y + renderer->position.y - es->prevMousePos.y) / es->gridSize) * es->gridSize;
+        renderRect(renderer, 0x66FFE49E, es->prevMousePos, rectSize);
     }
     rectNode* currNode = es->rl;
     while ( currNode != NULL ) {
@@ -473,9 +508,22 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     SDL_SetRenderDrawColor(renderer->renderer, 0x0, 0x0, 0x0, 0x0);
     SDL_RenderClear(renderer->renderer);
     SDL_RenderCopy(renderer->renderer, es->cursorTexture, NULL, es->cursorRect);
+
+    /* Render Grid */
+    if ( es->gridSize != 1 ) {
+        for ( int y = -((int) wrldPos.y % es->gridSize); y < SCREEN_HEIGHT; y += es->gridSize ) {
+            SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+            SDL_RenderDrawLine(renderer->renderer, 0, y, SCREEN_WIDTH, y);
+        }
+        for ( int x = -((int) wrldPos.x % es->gridSize); x < SCREEN_WIDTH; x += es->gridSize ) {
+            SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+            SDL_RenderDrawLine(renderer->renderer, x, 0, x, SCREEN_HEIGHT);
+        }
+    }
+    /* ----------- */
     
-    renderRect(renderer, 0x32000000, (Vector) { SCREEN_WIDTH - 200, 0 }, (Vector) { 200, 150 });
-    renderRect(renderer, 0x32000000, (Vector) { 0, 0 }, (Vector) { 230, 150 });
+    renderRect(renderer, 0x82000000, (Vector) { SCREEN_WIDTH - 200, 0 }, (Vector) { 200, 150 });
+    renderRect(renderer, 0x82000000, (Vector) { 0, 0 }, (Vector) { 230, 150 });
     SDL_Rect lastRect = renderText(renderer, "MAP EDITOR", TRIGHT, (Vector) { SCREEN_WIDTH * 0.99, 0 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     SDL_Rect keyRect = (SDL_Rect) { lastRect.x - 6, lastRect.y + lastRect.h - 8, TKEYSIZE * 3, TKEYSIZE * 3 };
     renderKeyboardKey(renderer, 18, keyRect);
@@ -495,9 +543,9 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     lastRect.x -= 5; lastRect.y -= 2; lastRect.w += 20; lastRect.h += 6;
     if ( es->currTool == TYPING_PATH ) {
-        renderRect(renderer, 0x55000000, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
+        renderRect(renderer, 0xFF615151, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
     } else {
-        renderRect(renderer, 0x33000000, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
+        renderRect(renderer, 0xFF413131, (Vector) { lastRect.x, lastRect.y }, (Vector) { lastRect.w, lastRect.h });
     }
     es->pathRect = lastRect;
     lastRect = renderTextSmall(renderer, es->mf->path, TLEFT, (Vector) { 10, 10 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
@@ -511,6 +559,21 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     keyRect = (SDL_Rect) { 160, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
     renderKeyboardKey(renderer, 12, keyRect);
 
+    /* Grid Controls */
+    renderRect(renderer, 0x82000000, (Vector) { 0, SCREEN_HEIGHT - 180 }, (Vector) { 250, 200 });
+    lastRect = renderText(renderer, es->gridSizeText, TLEFT, (Vector) { 6, SCREEN_HEIGHT - 175 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    lastRect = renderText(renderer, "Toggle Grid", TLEFT, (Vector) { 66, SCREEN_HEIGHT - 130 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    keyRect = (SDL_Rect) { 6, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 6, keyRect);
+    lastRect = renderText(renderer, "Grid Size +", TLEFT, (Vector) { 66, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    keyRect = (SDL_Rect) { 6, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 9, keyRect);
+    lastRect = renderText(renderer, "Grid Size -", TLEFT, (Vector) { 66, lastRect.y + lastRect.h }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
+    keyRect = (SDL_Rect) { 6, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
+    renderKeyboardKey(renderer, 10, keyRect);
+    /* ------------- */
+
+    /* Popups */
     if ( es->currTool == SAVE_CONFIRM ) {
         renderConfirmPopup(renderer, "Save file?");
     }
@@ -523,6 +586,7 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     if ( es->currTool == LOAD_DONE ) {
         renderPopup(renderer, "File loaded!");
     }
+    /* ----- */
 
     SDL_SetRenderTarget(renderer->renderer, NULL);
     SDL_RenderCopy(renderer->renderer, uiLayer.tx, NULL, NULL);

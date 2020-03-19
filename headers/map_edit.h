@@ -15,6 +15,7 @@
 extern Lifetime lt;
 extern const int SCREEN_WIDTH;
 extern const int TKEYSIZE;
+extern int CTRL_STATE;
 extern renderLayer uiLayer;
 
 enum tool {
@@ -56,8 +57,11 @@ typedef struct {
     Vector panStartCamera;
     rectList rl;
     int cursorState;
+    int gridSize;
+    int tmpGridSize;
     enum tool currTool;
     enum tool prevTool;
+    char* gridSizeText;
 
     mapFile* mf;
 
@@ -66,6 +70,7 @@ typedef struct {
     SDL_Rect pathRect;
 } mapEditorState;
 
+/* Linked list stuff */
 void popRectNode(rectList list, int index);
 void freeAllRectNodes(rectList list);
 void printRectList(rectList list);
@@ -74,9 +79,10 @@ rectNode* addRectNode(rectList list);
 
 int rectListLength(rectList list);
 
-
 editorRect* getListRect(rectList list, int index);
+/* ----------------- */
 
+/* Map editor stuff */
 int isMouseInRect(editorRect r);
 int isMouseInSDL_Rect(SDL_Rect r);
 
@@ -91,3 +97,4 @@ void mapHandleMouseClick(int button, mapEditorState* es, worldRenderer* renderer
 void mapHandleMouseRelease(int button, mapEditorState* es, worldRenderer* renderer);
 void mapEditUpdate(mapEditorState* es, worldRenderer* renderer);
 void mapEditDraw(worldRenderer* renderer, mapEditorState* es);
+/* ----------------- */
