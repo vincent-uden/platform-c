@@ -134,10 +134,12 @@ int main() {
     editorState.rl = NULL;
     editorState.cursorTexture = cursorTexture; editorState.cursorRect = &cursorRect;
     editorState.cursorState = 0;
-    editorState.gridSize = 100;
+    editorState.gridSize = 64;
     editorState.tmpGridSize = editorState.gridSize;
     editorState.currTool = SELECT;
     editorState.mf = NULL;
+    editorState.gridSizeText = malloc(sizeof(char) * 20);
+    PUSH_LT(lt, editorState.gridSizeText, free);
 
     worldState gameState;
     gameState.rects = NULL;

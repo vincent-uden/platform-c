@@ -61,6 +61,7 @@ typedef struct {
     int tmpGridSize;
     enum tool currTool;
     enum tool prevTool;
+    char* gridSizeText;
 
     mapFile* mf;
 

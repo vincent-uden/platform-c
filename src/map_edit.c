@@ -478,6 +478,7 @@ void mapEditUpdate(mapEditorState* es, worldRenderer* renderer) {
         VectorAddIp(&(renderer->position), es->panStartPos);
         VectorSubIp(&(renderer->position), mDelta);
     }
+    sprintf(es->gridSizeText, "Grid size: %i", es->tmpGridSize);
 }
 
 void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
@@ -510,7 +511,6 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
 
     /* Render Grid */
     if ( es->gridSize != 1 ) {
-        printf("wrldPos.y %f, gridSize %i\n", wrldPos.y, es->gridSize);
         for ( int y = -((int) wrldPos.y % es->gridSize); y < SCREEN_HEIGHT; y += es->gridSize ) {
             SDL_SetRenderDrawColor(renderer->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
             SDL_RenderDrawLine(renderer->renderer, 0, y, SCREEN_WIDTH, y);
@@ -560,7 +560,8 @@ void mapEditDraw(worldRenderer* renderer, mapEditorState* es) {
     renderKeyboardKey(renderer, 12, keyRect);
 
     /* Grid Controls */
-    renderRect(renderer, 0x82000000, (Vector) { 0, SCREEN_HEIGHT - 140 }, (Vector) { 250, 200 });
+    renderRect(renderer, 0x82000000, (Vector) { 0, SCREEN_HEIGHT - 180 }, (Vector) { 250, 200 });
+    lastRect = renderText(renderer, es->gridSizeText, TLEFT, (Vector) { 6, SCREEN_HEIGHT - 175 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     lastRect = renderText(renderer, "Toggle Grid", TLEFT, (Vector) { 66, SCREEN_HEIGHT - 130 }, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     keyRect = (SDL_Rect) { 6, lastRect.y - 10, TKEYSIZE * 3, TKEYSIZE * 3 };
     renderKeyboardKey(renderer, 6, keyRect);
