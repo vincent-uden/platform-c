@@ -1,16 +1,16 @@
 #include "../headers/physics.h"
 
+/* Returns wether value is in between lower and upper bound */
 int between(double lowerBound, double upperBound, double value) {
     return value <= upperBound && value >= lowerBound;
 }
 
-/* Vector */
-double
-VectorMag(Vector v){
+/* Returns the length of a given vector */
+double VectorMag(Vector v){
     return sqrt(pow(v.x, 2) + pow(v.y, 2));
 }
 
-/* TODO: Test this function */
+/* Returns a vectors heading (counter clockwise) */
 double VectorAngle(Vector v) {
     /* Avoid division by zero */
     if ( v.x == 0 ) {
@@ -37,6 +37,7 @@ double VectorAngle(Vector v) {
     }
 }
 
+/* Returns the scalar product between two vectors */
 double VectorScalar(Vector u, Vector v) {
     if ( VectorMag(u) == 0 || VectorMag(v) == 0 ) 
         return 0;
@@ -50,6 +51,7 @@ double VectorScalar(Vector u, Vector v) {
     return fabs(absu * absv * cos(angle));
 }
 
+/* Returns the length of u when projected onto v */
 double VectorProject(Vector u, Vector v) {
     /* Returns the length of u projected on v */
     if ( VectorMag(u) == 0 || VectorMag(v) == 0 ) 
@@ -63,38 +65,38 @@ double VectorProject(Vector u, Vector v) {
     return fabs(absu * cos(angle));
 }
 
-Vector
-VectorAdd(Vector v1, Vector v2){
+/* Adds two vectors component-wise */
+Vector VectorAdd(Vector v1, Vector v2){
     return (Vector) { v1.x + v2.x, v1.y + v2.y };
 }
 
-Vector
-VectorSub(Vector v1, Vector v2){
+/* Subtracts two vectors component-wise */
+Vector VectorSub(Vector v1, Vector v2){
     return (Vector) { v1.x - v2.x, v1.y - v2.y };
 }
 
-Vector
-VectorMul(Vector v, double scalar){
+/* Multiplies a vector by a scalar amount */
+Vector VectorMul(Vector v, double scalar){
     return (Vector) { v.x * scalar, v.y * scalar };
 }
 
-Vector
-VectorDiv(Vector v, double denominator){
+/* Divides a vector by a scalar amount */
+Vector VectorDiv(Vector v, double denominator){
     return (Vector) { v.x / denominator, v.y / denominator };
 }
 
-Vector 
-VectorHalfSize(Vector v) {
+/* Returns half the size of a vector, used in certain collision calculations */
+Vector VectorHalfSize(Vector v) {
     return VectorDiv(v, 2);
 }
 
-Vector 
-VectorFromPolar(double mag, double angle) {
+/* Calculates the cartesian representation of a vector from polar coordinates */
+Vector VectorFromPolar(double mag, double angle) {
     return (Vector) { mag * cos(angle), mag * sin(angle) };
 }
 
-Vector 
-VectorRotateOnPoint(Vector v, Vector point, double angle) {
+/* Rotates a vector around a given point */
+Vector VectorRotateOnPoint(Vector v, Vector point, double angle) {
     VectorSubIp(&v, point);
     double mag = VectorMag(v);
     double currAngle = acos(v.x / mag);
@@ -108,46 +110,46 @@ VectorRotateOnPoint(Vector v, Vector point, double angle) {
     return v;
 }
 
-void
-VectorAddIp(Vector* v1, Vector v2){
+/* Adds a vector to another in place */
+void VectorAddIp(Vector* v1, Vector v2){
     v1->x += v2.x;
     v1->y += v2.y;
 }
 
-void
-VectorSubIp(Vector* v1, Vector v2){
+/* Subtracts a vector to another in place */
+void VectorSubIp(Vector* v1, Vector v2){
     v1->x -= v2.x;
     v1->y -= v2.y;
 }
 
-void
-VectorMulIp(Vector* v, double scalar){
+/* Scale a vector in place */
+void VectorMulIp(Vector* v, double scalar){
     v->x *= scalar;
     v->y *= scalar;
 }
 
-void
-VectorDivIp(Vector* v, double denominator){
+/* Divide a vector in place */
+void VectorDivIp(Vector* v, double denominator){
     v->x /= denominator;
     v->y /= denominator;
 }
 
-void 
-VectorPrint(Vector v) {
+/* Pretty prints a vector */
+void VectorPrint(Vector v) {
     printf("x: %f y: %f\n", v.x, v.y);
 }
 
-int 
-VectorEq(Vector v1, Vector v2) {
+/* Return if two vectors are identical */
+int VectorEq(Vector v1, Vector v2) {
     return v1.x == v2.x && v1.y == v2.y;
 }
 
+/* Returns how much, if at all two ColliderRect overlap */
 Vector isColliding(ColliderRect c1, ColliderRect c2) {
-    // Only works downwards and to the right
     Vector push;
     push.x = 0;
     push.y = 0;
-    // Check x-overlap
+    /* Check x-overlap */
     if ( c1.pos.x < c2.pos.x && c1.pos.x + c1.size.x > c2.pos.x ) {
         push.x = c1.pos.x - c2.pos.x + c1.size.x;
     }
