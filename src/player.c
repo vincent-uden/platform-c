@@ -1,5 +1,6 @@
 #include "../headers/player.h"
 
+/* Constructor */
 Player makePlayer(Vector pos) {
     return (Player) {
         pos,
@@ -13,6 +14,7 @@ Player makePlayer(Vector pos) {
     };
 }
 
+/* Handles keyboard input */
 void playerHandleInput(Player* player, int* KEYS) {
     player->acc = (Vector) { 0, 0 };
     if ( KEYS[SDLK_d] ) {
@@ -32,6 +34,7 @@ void playerHandleInput(Player* player, int* KEYS) {
     }
 }
 
+/* Updates the player every frame while playing */
 void playerUpdate(Player* player, double deltaTime, worldState* ws) {
     double airResMag;
     if ( player->acc.x ) {
