@@ -27,10 +27,12 @@ void worldSetRects(worldState* ws, mapEditorState* es) {
    ws->rectAmount = amount;
 }
 
+/* Updates the world every frame */
 void worldUpdate(worldState* ws) {
     return;
 }
 
+/* Renders the objects in the world to the renderers current target */
 void worldDraw(worldRenderer* renderer, worldState* ws) {
     for ( int i = 0; i < ws->rectAmount; i++ ) {
         renderRect(renderer, RECT_SHADOW, VectorAdd(ws->rects[i].position, (Vector) { 5, 10 }), ws->rects[i].size);
@@ -38,6 +40,7 @@ void worldDraw(worldRenderer* renderer, worldState* ws) {
     }
 }
 
+/* Type-conversion function */
 ColliderRect worldToColliderRect(worldRect wr) {
     ColliderRect output;
     output.pos = wr.position;

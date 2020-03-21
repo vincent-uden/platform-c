@@ -7,6 +7,7 @@
 #include "./rendering.h"
 #include "./lifetime.h"
 
+/*                        AABBGGRR */
 #define RECT_COLOR      0xFFFFE49E
 #define RECT_SHADOW     0x44000000
 #define EDIT_RECT_COLOR 0xaaFFE49E

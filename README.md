@@ -16,6 +16,9 @@ The included Makefile should cover everything. "make" to compile and "make run" 
   - Select tool = S
   - Save map = N
   - Load map = M
+  - Toggle Grid = G
+  - Grid Size + = K (Ctrl can be used for fine control)
+  - Grid Size - = J (Ctrl can be used for fine control)
 - Toggle frame-by-frame mode = P
   - Advance one frame = N
 

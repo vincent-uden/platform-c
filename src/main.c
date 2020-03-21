@@ -20,8 +20,10 @@ const int FPSARRSIZE = 60;
 int CTRL_STATE = 0;
 
 enum game_mode {PLAYING, MAPEDIT, PAUSED, FRAMESTEP};
+/* Pause menu values */
 const int pauseMenuLen = 4;
 const char* menuTexts[] = {"Resume", "Controls", "Settings", "Exit"};
+/* ----------------- */
 
 renderLayer uiLayer;
 renderLayer pauseLayer;
@@ -36,6 +38,7 @@ SDL_Texture* keyboardTexture;
 int main() {
     lt = createLt();
 
+    /* SDL Initialization */
     SDL_Window* window = NULL;
 
     SDL_Renderer* renderer = NULL;
@@ -67,10 +70,14 @@ int main() {
     }
     PUSH_LT(lt, renderer, SDL_DestroyRenderer);
     SDL_ShowCursor(0);
+    /* ------------------ */
+
+    /* Render layers */
     worldRenderer wrldRenderer = { renderer, (Vector) { 0, 0 } };
     worldRenderer* wRenderer = &wrldRenderer;
     uiLayer = createRenderLayer(wRenderer, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
     pauseLayer = createRenderLayer(wRenderer, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
+    /* ------------- */
 
     /* Texture loading */
     SDL_Texture* cursorTexture = IMG_LoadTexture(renderer, "./textures/cursor.png");
@@ -88,7 +95,7 @@ int main() {
     bgRect.h = 512;
     keyboardTexture = IMG_LoadTexture(renderer, "./textures/keys.png");
     PUSH_LT(lt, keyboardTexture, SDL_DestroyTexture);
-    /* End of texture loading */
+    /* --------------- */
 
     /* Font Loading */
     TTF_Init();
@@ -96,7 +103,7 @@ int main() {
     sansBoldSmall = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 22);
     sansBoldBig   = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 46);
     sansBoldHuge  = TTF_OpenFont("./textures/fonts/SourceSansPro-Regular.ttf", 60);
-    /* End of font loading */
+    /* ------------ */
 
     Player player = makePlayer((Vector) { 100, 100 });
 
@@ -254,7 +261,6 @@ int main() {
             break;
         case FRAMESTEP:
             if ( frameStep ) {
-        puts("############################");
                 worldUpdate(&gameState);
                 playerHandleInput(&player, KEYS);
                 for ( int i = 0; i < 10; i++ ) {

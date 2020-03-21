@@ -19,6 +19,9 @@
    popPtrLt(&lt, testInt);
 */
 
+/* Lifetime is a system to aid in tracking all memory allocations 
+ * as to guarantee memory safety
+ */
 typedef struct {
     void **ptrs;
     void (**deAllocators) (void *ptr);
@@ -35,6 +38,10 @@ void popPtrLt(Lifetime* lt, void* ptr);
 void printLt(Lifetime lt);
 void unwindLt(Lifetime* lt);
 
+/* These macros should be used to interact with the Lifetime struct,
+ * not the functions. They include some nice casting which reduces
+ * boilerplate code.
+ */
 #define PUSH_LT(lt, ptr, deAllocator) \
     pushLt(&lt, ptr, (void (*) (void*)) deAllocator)
 

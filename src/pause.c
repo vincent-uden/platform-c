@@ -1,5 +1,6 @@
 #include "../headers/pause.h"
 
+/* Handles all keyboard presses while the pause menu is open */
 int pauseMenuHandleInput(int* KEYS, pauseMenuState* ps) {
     /* Up */
     if ( KEYS[SDLK_w] || KEYS[SDLK_k] ) {
@@ -33,10 +34,12 @@ int pauseMenuHandleInput(int* KEYS, pauseMenuState* ps) {
     return 0;
 }
 
+/* This updates the pause menu's state every frame */
 void pauseMenuUpdate(pauseMenuState* ps, worldRenderer* renderer) {
 
 }
 
+/* Renders the pause menu UI */
 void pauseMenuDraw(pauseMenuState* ps, worldRenderer* renderer) {
     Vector wrldPos = renderer->position;
     renderer->position = (Vector) { 0, 0 };
@@ -46,6 +49,7 @@ void pauseMenuDraw(pauseMenuState* ps, worldRenderer* renderer) {
 
     renderRect(renderer, 0x44000000, (Vector) { 0, 0 }, (Vector) { SCREEN_WIDTH, SCREEN_HEIGHT });
 
+    /* Render all menu options */
     SDL_Rect lastRect = (SDL_Rect) { 10, 40, 0, 0 };
     for ( int i = 0; i < pauseMenuLen; i++ ) {
         if ( i == ps->selectedIndex ) {
@@ -54,6 +58,7 @@ void pauseMenuDraw(pauseMenuState* ps, worldRenderer* renderer) {
             lastRect = renderText(renderer, (char*) menuTexts[i], TLEFT, (Vector) { 40, lastRect.y + lastRect.h}, (SDL_Color) { 0xFF, 0xFF, 0xFF, 0xcc});
         }
     }
+    /* ----------------------- */
 
     lastRect = renderTextSmall(renderer, "Platform C - Alpha version 0.1", TRIGHT, (Vector) { SCREEN_WIDTH - 10, 10}, (SDL_Color) { 0xDD, 0xFF, 0xFF});
     lastRect = renderTextSmall(renderer, "github.com/vincent-uden/platform-c", TRIGHT, (Vector) { SCREEN_WIDTH - 10, SCREEN_HEIGHT - 40}, (SDL_Color) { 0xDD, 0xFF, 0xFF});

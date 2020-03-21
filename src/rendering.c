@@ -12,6 +12,7 @@
     Uint32 amask = 0xFF000000;
 #endif
 
+/* Returns a new renderLayer of a given size */
 renderLayer createRenderLayer(worldRenderer* renderer, Vector size) {
     renderLayer output;
     output.tx = SDL_CreateTexture(renderer->renderer, 
@@ -23,6 +24,7 @@ renderLayer createRenderLayer(worldRenderer* renderer, Vector size) {
     return output;
 }
 
+/* Renders a rectangle to the renderers current renderTarget */
 void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
     if ( size.x < 0 ) {
         size.x *= -1;
@@ -56,6 +58,7 @@ void renderRect(worldRenderer* renderer, int color, Vector pos, Vector size) {
     POP_LT(lt);
 }
 
+/* Render a tileable background texture to the renderers current target */
 void renderBackground(worldRenderer* renderer, SDL_Texture* bgTexture, SDL_Rect txtRect) {
     int txWidth = txtRect.w;
     int txHeight = txtRect.h;
@@ -80,6 +83,7 @@ void renderBackground(worldRenderer* renderer, SDL_Texture* bgTexture, SDL_Rect 
     }
 }
 
+/* Render a key with index *key* from the keyboard tileset to the renderers current target */
 void renderKeyboardKey(worldRenderer* renderer, int key, SDL_Rect dst) {
     SDL_Rect src = (SDL_Rect) { 
         (key % 8) * TKEYSIZE, 
@@ -90,6 +94,7 @@ void renderKeyboardKey(worldRenderer* renderer, int key, SDL_Rect dst) {
     SDL_RenderCopy(renderer->renderer, keyboardTexture, &src, &dst);
 }
 
+/* Used in the text-render functions of different sizes */
 SDL_Rect renderTextBackend(worldRenderer* renderer, char* text, enum textAdjust adj, Vector pos, SDL_Color color, TTF_Font* font) {
     VectorSubIp(&pos, renderer->position);
     SDL_Surface* msgSurf = TTF_RenderText_Blended(font, text, color);
@@ -126,7 +131,7 @@ SDL_Rect renderTextHuge(worldRenderer* renderer, char* text, enum textAdjust adj
     return renderTextBackend(renderer, text, adj, pos, color, sansBoldHuge);
 }
 
-/* Always render centered in screen */
+/* Render a popup window background centered on the screen to the renderers current target */
 SDL_Rect renderPopup(worldRenderer* renderer, char* text) {
     SDL_Surface* msgSurf = TTF_RenderText_Blended(sansBold, text, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     PUSH_LT(lt, msgSurf, SDL_FreeSurface);
@@ -158,7 +163,7 @@ SDL_Rect renderPopup(worldRenderer* renderer, char* text) {
     return (SDL_Rect) { outerRectPos.x, outerRectPos.y, outerRectSize.x, outerRectSize.y };
 }
 
-/* Always render centered in screen */
+/* Render a popup confirmation window background centered on the screen to the renderers current target */
 SDL_Rect renderConfirmPopup(worldRenderer* renderer, char* text) {
     SDL_Surface* msgSurf = TTF_RenderText_Blended(sansBold, text, (SDL_Color) { 0xFF, 0xFF, 0xFF });
     PUSH_LT(lt, msgSurf, SDL_FreeSurface);
