@@ -48,7 +48,7 @@ int main() {
         exit(1);
     }
 
-    window = SDL_CreateWindow("SDL Tutorial", 
+    window = SDL_CreateWindow("SDL Tutorial",
             SDL_WINDOWPOS_UNDEFINED,
             SDL_WINDOWPOS_UNDEFINED,
             SCREEN_WIDTH,
@@ -109,8 +109,8 @@ int main() {
 
     int running = 1;
     int frames = FPSARRSIZE;
-    SDL_Event e; 
-    
+    SDL_Event e;
+
     int KEYS[322];
     for ( int i = 0; i < 322; i++ ) {
         KEYS[i] = 0;
@@ -190,6 +190,7 @@ int main() {
                              editorState.currTool != LOAD_CONFIRM
                         ) {
                             gm = PLAYING;
+                            worldSetRects(&gameState, &editorState);
                         }
                     }
                 }
